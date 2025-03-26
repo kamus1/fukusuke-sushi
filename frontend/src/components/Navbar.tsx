@@ -37,6 +37,17 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
+                to="/productos"
+                end
+              >
+                Productos
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                className={({ isActive }) =>
+                  `nav-link${isActive ? " active" : ""}`
+                }
                 to="/about"
               >
                 Acerca de
@@ -51,6 +62,8 @@ const Navbar = () => {
               >
                 Contacto
               </NavLink>
+
+              
             </li>
           </ul>
         </div>
