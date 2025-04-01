@@ -1,0 +1,80 @@
+[
+    {
+      "id": 1,
+      "nombre": "Tabla Sushi 1",
+      "precio": 12990,
+      "disponible": 8,
+      "img_url": "/images/sushi1.jpg"
+    },
+    {
+      "id": 2,
+      "nombre": "Tabla Sushi 2",
+      "precio": 13990,
+      "disponible": 6,
+      "img_url": "/images/sushi2.jpg"
+    },
+    {
+      "id": 3,
+      "nombre": "Tabla Sushi 3",
+      "precio": 11990,
+      "disponible": 10,
+      "img_url": "/images/sushi3.jpg"
+    },
+    {
+      "id": 4,
+      "nombre": "HandRoll",
+      "precio": 3990,
+      "disponible": 5,
+      "img_url": "/images/sushi4.jpg"
+    },
+    {
+      "id": 5,
+      "nombre": "48 piezas",
+      "precio": 11990,
+      "disponible": 12,
+      "img_url": "/images/sushi5.jpg"
+    },
+    {
+      "id": 6,
+      "nombre": "Tabla Sushi 6",
+      "precio": 16990,
+      "disponible": 3,
+      "img_url": "/images/sushi6.jpg"
+    },
+    {
+      "id": 7,
+      "nombre": "Sushi De Salmón",
+      "precio": 10990,
+      "disponible": 9,
+      "img_url": "/images/sushi7.jpg"
+    },
+    {
+      "id": 8,
+      "nombre": "Sushi de camarón empanizado",
+      "precio": 13990,
+      "disponible": 7,
+      "img_url": "/images/sushi8.jpg"
+    },
+    {
+      "id": 9,
+      "nombre": "Sushi De Salmón y palta",
+      "precio": 15990,
+      "disponible": 2,
+      "img_url": "/images/sushi9.jpg"
+    },
+    {
+      "id": 10,
+      "nombre": "Tabla 24 piezas",
+      "precio": 19990,
+      "disponible": 4,
+      "img_url": "/images/sushi10.webp"
+    },
+    {
+        "id": 10,
+        "nombre": "Especial Caviar",
+        "precio": 199990,
+        "disponible": 0,
+        "img_url": "/images/sushi10.jpg"
+      }
+  ]
+  

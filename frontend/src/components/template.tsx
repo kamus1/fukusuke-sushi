@@ -14,7 +14,7 @@ export default ComponentName;
 
 // se usa un componente de styles components general, y luego se modifica por clases
 // recomendado tener instalado extension: vscode-styled-components o alguna similar
-
+// se puede usar classNames individuales y modificar su css dentro del div de Container o tambíen se puede crear componentes individuales
 // styles
 const Container = styled.div`
   margin-top: 20px;
