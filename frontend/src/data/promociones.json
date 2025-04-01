@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "titulo": "Promociones del día",
+      "descripcion": "Aprovecha nuestros combos especiales.",
+      "img_url": "/images/carrousel/promo1.png",
+      "link": "/productos"
+    },
+    {
+      "id": 2,
+      "titulo": "Sushi Lovers",
+      "descripcion": "Descuentos para fanáticos del sushi.",
+      "img_url": "/images/carrousel/promo2.png",
+      "link": "/productos"
+    },
+    {
+      "id": 3,
+      "titulo": "2x1 en rolls",
+      "descripcion": "Todos los martes, 2x1 en rolls seleccionados.",
+      "img_url": "/images/carrousel/promo3.jpg",
+      "link": "/productos"
+    }
+  ]
+  

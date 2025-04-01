@@ -6,7 +6,7 @@ const Navbar = () => {
     <Container className="navbar navbar-expand-lg navbar-light">
       <div className="container-fluid">
         <NavLink className="navbar-brand" to="/">
-          Fukusuke Sushi
+          🍣 Fukusuke Sushi
         </NavLink>
         <button
           className="navbar-toggler"
