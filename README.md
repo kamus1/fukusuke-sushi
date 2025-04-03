@@ -17,3 +17,9 @@ Si es la primera vez, hacer:
 Si no, solo ejecutar:
 
 `npm run dev`
+
+
+# Deploy gh-pages
+Para Actualizar la web en gh-pages ejecutar el siguiente comando:
+
+`npm run deploy`
