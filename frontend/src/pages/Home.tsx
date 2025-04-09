@@ -69,7 +69,7 @@ const Home: React.FC = () => {
                       })
                     }
                   >
-                    Comprar
+                    Añadir al carrito
                   </button>
                 </div>
               </div>
