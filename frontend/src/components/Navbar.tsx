@@ -26,7 +26,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/"
+                to="/fukusuke-sushi/"
                 end
               >
                 Home
@@ -37,7 +37,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/productos"
+                to="/fukusuke-sushi/productos"
                 end
               >
                 Productos
@@ -48,17 +48,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/about"
-              >
-                Acerca de
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                className={({ isActive }) =>
-                  `nav-link${isActive ? " active" : ""}`
-                }
-                to="/contact"
+                to="/fukusuke-sushi/contact"
               >
                 Contacto
               </NavLink>
