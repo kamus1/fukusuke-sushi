@@ -1,74 +1,92 @@
 import styled from "styled-components";
 import webpayLogo from "../assets/images/logo-webpay-plus-3-2.png";
 import servipagLogo from "../assets/images/Logo_Servipag.svg";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const PaymentPage = () => {
   const location = useLocation();
   const total = location.state?.total || 0;
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const handlePayment = () => {
+    setPaymentSuccess(true);
+  };
 
   return (
     <Container>
-      <Section>
-        <Legend>Forma pago</Legend>
-        <PaymentOptions>
-          <Option>
-            <input type="radio" name="payment" id="webpay" defaultChecked />
-            <label htmlFor="webpay">
-              Webpay (Tarjeta de Crédito o Redcompra)
-              <Logos>
-                <img src={webpayLogo} alt="Webpay" />
-              </Logos>
-            </label>
-          </Option>
-          <Option>
-            <input type="radio" name="payment" id="servipag" />
-            <label htmlFor="servipag">
-              Servipag Online
-              <Logos>
-                <img src={servipagLogo} alt="Servipag" />
-              </Logos>
-            </label>
-          </Option>
-        </PaymentOptions>
-      </Section>
+      {paymentSuccess ? (
+        <>
+          <SuccessMessage>Su pago ha sido realizado con éxito. Los detalles de la compra fueron enviados a su correo.</SuccessMessage>
+          <ButtonContainer>
+            <HomeButton onClick={() => navigate('/')}>Volver a la Página Principal</HomeButton>
+          </ButtonContainer>
+        </>
+      ) : (
+        <>
+          <Section>
+            <Legend>Forma pago</Legend>
+            <PaymentOptions>
+              <Option>
+                <input type="radio" name="payment" id="webpay" defaultChecked />
+                <label htmlFor="webpay">
+                  Webpay (Tarjeta de Crédito o Redcompra)
+                  <Logos>
+                    <img src={webpayLogo} alt="Webpay" />
+                  </Logos>
+                </label>
+              </Option>
+              <Option>
+                <input type="radio" name="payment" id="servipag" />
+                <label htmlFor="servipag">
+                  Servipag Online
+                  <Logos>
+                    <img src={servipagLogo} alt="Servipag" />
+                  </Logos>
+                </label>
+              </Option>
+            </PaymentOptions>
+          </Section>
 
-      <Section>
-        <Legend>Información pago</Legend>
-        <InfoContainer>
-          <ItemTable>
-            <thead>
-              <tr>
-                <th>Id/Detalle Item</th>
-                <th>Precio</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Pedido Fukusuke Sushi</td>
-                <td>${total.toLocaleString("es-CL")}</td>
-              </tr>
-            </tbody>
-          </ItemTable>
-          <InputGrid>
-            <input type="text" placeholder="Nombres" />
-            <input type="text" placeholder="R.U.T." />
-            <input type="email" placeholder="E-mail" />
-            <input type="email" placeholder="Repita E-mail" />
-          </InputGrid>
-        </InfoContainer>
-        <TotalRow>
-          <span>Total a Pagar</span>
-          <strong>${total.toLocaleString("es-CL")}</strong>
-        </TotalRow>
-        <Logos>
-          <img src={webpayLogo} alt="Webpay" />
-          <img src={servipagLogo} alt="Servipag" />
-        </Logos>
-        <ButtonContainer>
-          <PayButton>PAGAR AHORA</PayButton>
-        </ButtonContainer>
-      </Section>
+          <Section>
+            <Legend>Información pago</Legend>
+            <InfoContainer>
+              <ItemTable>
+                <thead>
+                  <tr>
+                    <th>Id/Detalle Item</th>
+                    <th>Precio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Pedido Fukusuke Sushi</td>
+                    <td>${total.toLocaleString("es-CL")}</td>
+                  </tr>
+                </tbody>
+              </ItemTable>
+              <InputGrid>
+                <input type="text" placeholder="Nombres" />
+                <input type="text" placeholder="R.U.T." />
+                <input type="email" placeholder="E-mail" />
+                <input type="email" placeholder="Repita E-mail" />
+              </InputGrid>
+            </InfoContainer>
+            <TotalRow>
+              <span>Total a Pagar</span>
+              <strong>${total.toLocaleString("es-CL")}</strong>
+            </TotalRow>
+            <Logos>
+              <img src={webpayLogo} alt="Webpay" />
+              <img src={servipagLogo} alt="Servipag" />
+            </Logos>
+            <ButtonContainer>
+              <PayButton onClick={handlePayment}>PAGAR AHORA</PayButton>
+            </ButtonContainer>
+          </Section>
+        </>
+      )}
     </Container>
   );
 };
@@ -82,6 +100,13 @@ const Container = styled.div`
   margin: 2rem auto;
   padding: 1rem;
   font-family: sans-serif;
+`;
+
+const SuccessMessage = styled.div`
+  font-size: 1.5rem;
+  color: green;
+  text-align: center;
+  margin-top: 2rem;
 `;
 
 const Section = styled.div`
@@ -184,6 +209,21 @@ const PayButton = styled.button`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 1rem;
+`;
+
+const HomeButton = styled.button`
+  background: #FF9122;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:hover {
+    background: #e07b1a;
+  }
 `;
