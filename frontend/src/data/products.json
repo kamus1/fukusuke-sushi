@@ -4,76 +4,131 @@
     "nombre": "Tabla Sushi 1",
     "precio": 12990,
     "disponible": 8,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi1.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi1.jpg",
+    "descripcion": "Tabla clásica con 18 piezas: 6 nigiri salmón, 6 maki pepino-palta, 6 uramaki tempura",
+    "tipo": "tabla",
+    "cantidad_piezas": 18,
+    "especialidad": "clásica",
+    "tags": ["popular", "recomendado"]
   },
   {
     "id": 2,
     "nombre": "Tabla Sushi 2",
     "precio": 13990,
     "disponible": 6,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi2.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi2.jpg",
+    "descripcion": "Tabla premium con 20 piezas: 4 nigiri atún, 4 sashimi salmón, 6 maki camarón, 6 uramaki phila",
+    "tipo": "tabla",
+    "cantidad_piezas": 20,
+    "especialidad": "premium",
+    "tags": ["nuevo"]
   },
   {
     "id": 3,
     "nombre": "Tabla Sushi 3",
     "precio": 11990,
     "disponible": 10,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi3.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi3.jpg",
+    "descripcion": "Tabla vegetariana con 16 piezas: 8 maki zanahoria-queso, 8 uramaki palta-espinaca",
+    "tipo": "tabla",
+    "cantidad_piezas": 16,
+    "especialidad": "vegetariana",
+    "tags": ["vegetariano"]
   },
   {
     "id": 4,
     "nombre": "HandRoll",
     "precio": 3990,
     "disponible": 5,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi4.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi4.jpg",
+    "descripcion": "Cono de alga nori relleno con salmón, arroz y vegetales",
+    "tipo": "individual",
+    "cantidad_piezas": 1,
+    "especialidad": "clásico",
+    "tags": ["rápido"]
   },
   {
     "id": 5,
     "nombre": "48 piezas",
     "precio": 11990,
     "disponible": 12,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi5.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi5.jpg",
+    "descripcion": "Mix de 48 piezas: 16 nigiri variados, 16 maki clásicos, 16 uramaki especiales",
+    "tipo": "combo",
+    "cantidad_piezas": 48,
+    "especialidad": "familiar",
+    "tags": ["oferta", "família"]
   },
   {
     "id": 6,
     "nombre": "Tabla Sushi 6",
     "precio": 16990,
     "disponible": 3,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi6.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi6.jpg",
+    "descripcion": "Tabla del chef con 24 piezas: 8 nigiri mix, 8 sashimi premium, 8 uramaki especiales",
+    "tipo": "tabla",
+    "cantidad_piezas": 24,
+    "especialidad": "gourmet",
+    "tags": ["premium"]
   },
   {
     "id": 7,
     "nombre": "Sushi De Salmón",
     "precio": 10990,
     "disponible": 9,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi7.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi7.jpg",
+    "descripcion": "12 piezas de nigiri de salmón fresco con arroz avinagrado",
+    "tipo": "nigiri",
+    "cantidad_piezas": 12,
+    "especialidad": "tradicional",
+    "tags": ["clásico"]
   },
   {
     "id": 8,
     "nombre": "Sushi de camarón empanizado",
     "precio": 13990,
     "disponible": 7,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi8.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi8.jpg",
+    "descripcion": "10 piezas de uramaki con camarón empanizado y salsa especial",
+    "tipo": "uramaki",
+    "cantidad_piezas": 10,
+    "especialidad": "crunchy",
+    "tags": ["crujiente"]
   },
   {
     "id": 9,
     "nombre": "Sushi De Salmón y palta",
     "precio": 15990,
     "disponible": 2,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi9.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi9.jpg",
+    "descripcion": "Combinación premium de 15 piezas con salmón y palta",
+    "tipo": "combo",
+    "cantidad_piezas": 15,
+    "especialidad": "fusion",
+    "tags": ["nuevo"]
   },
   {
     "id": 10,
     "nombre": "Tabla 24 piezas",
     "precio": 19990,
     "disponible": 4,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi10.webp"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi10.webp",
+    "descripcion": "Selección ejecutiva con 8 tipos diferentes de sushi",
+    "tipo": "tabla",
+    "cantidad_piezas": 24,
+    "especialidad": "variada",
+    "tags": ["variedad"]
   },
   {
-    "id": 10,
+    "id": 11,
     "nombre": "Especial Caviar",
     "precio": 199990,
     "disponible": 0,
-    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi10.jpg"
+    "img_url": "https://kamus1.github.io/fukusuke-sushi/images/sushi10.jpg",
+    "descripcion": "Edición limitada con caviar beluga y ingredientes exclusivos",
+    "tipo": "especial",
+    "cantidad_piezas": 8,
+    "especialidad": "luxury",
+    "tags": ["exclusivo", "lujo"]
   }
 ]
