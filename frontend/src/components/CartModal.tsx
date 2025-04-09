@@ -220,12 +220,4 @@ const Title = styled.h2`
   }
 `;
 
-const GlobalStyle = styled.div`
-  .hide-on-mobile {
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
-`;
-
 export default CartModal;
