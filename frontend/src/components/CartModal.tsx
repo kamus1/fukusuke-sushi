@@ -18,8 +18,10 @@ const CartModal = ({ show, onClose }: Props) => {
   const navigate = useNavigate();
 
   const handlePayment = () => {
-    onClose();
-    navigate('/pago', { state: { total } });
+
+    onClose(); // Cerrar el modal
+    navigate('/fukusuke-sushi/pago', { state: { total } }); // Pasar el total como estado
+    
   };
 
   return (
