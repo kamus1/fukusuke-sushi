@@ -101,11 +101,11 @@ const Navbar = () => {
     <NavbarContainer>
       <Logo to="/">🍣 Fukusuke Sushi</Logo>
       <NavLinks>
-        <StyledNavLink to="/">Home</StyledNavLink>
-        <StyledNavLink to="/about">Acerca de</StyledNavLink>
-        <StyledNavLink to="/productos">Productos</StyledNavLink>
-        <StyledNavLink to="/contact">Contacto</StyledNavLink>
-        <StyledNavLink to="/admin">Admin</StyledNavLink>
+        <StyledNavLink to="/fukusuke-sushi">Home</StyledNavLink>
+        <StyledNavLink to="/fukusuke-sushi/about">Acerca de</StyledNavLink>
+        <StyledNavLink to="/fukusuke-sushi/productos">Productos</StyledNavLink>
+        <StyledNavLink to="/fukusuke-sushi/contact">Contacto</StyledNavLink>
+        <StyledNavLink to="/fukusuke-sushi/admin">Admin</StyledNavLink>
       </NavLinks>
       <MobileMenuButton>
         <span></span>
