@@ -4,6 +4,7 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Products from "../pages/Products";
 import PaymentPage from "../pages/PaymentPage";
+import Admin from "../pages/Admin";
 
 //aqui vamos a configurar todas las rutas de la pages que vayamos creando
 
@@ -16,6 +17,7 @@ const AppRoutes = () => {
       <Route path="/fukusuke-sushi/contact" element={<Contact />} />
       <Route path="/fukusuke-sushi/productos" element={<Products />} />
       <Route path="/fukusuke-sushi/pago" element={<PaymentPage />} />
+      <Route path="/fukusuke-sushi/admin" element={<Admin />} />
     </Routes>
   );
 };
