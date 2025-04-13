@@ -42,7 +42,7 @@ const Products: React.FC = () => {
                   {!isAvailable ? (
                     <small className="text-unavailable">Producto no disponible</small>
                   ) : (
-                    <small className="text-muted">Disponible: {product.disponible}</small>
+                    <small className="text-muted">{product.especialidad}</small>
                   )}
                   <p className="product-price">${product.precio}</p>
                   <button

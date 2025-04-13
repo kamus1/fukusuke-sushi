@@ -8,7 +8,7 @@
     "descripcion": "Tabla clásica con 18 piezas: 6 nigiri salmón, 6 maki pepino-palta, 6 uramaki tempura",
     "tipo": "tabla",
     "cantidad_piezas": 18,
-    "especialidad": "clásica",
+    "especialidad": "Clásica",
     "tags": ["popular", "recomendado"]
   },
   {
@@ -20,7 +20,7 @@
     "descripcion": "Tabla premium con 20 piezas: 4 nigiri atún, 4 sashimi salmón, 6 maki camarón, 6 uramaki phila",
     "tipo": "tabla",
     "cantidad_piezas": 20,
-    "especialidad": "premium",
+    "especialidad": "Premium",
     "tags": ["nuevo"]
   },
   {
@@ -32,7 +32,7 @@
     "descripcion": "Tabla vegetariana con 16 piezas: 8 maki zanahoria-queso, 8 uramaki palta-espinaca",
     "tipo": "tabla",
     "cantidad_piezas": 16,
-    "especialidad": "vegetariana",
+    "especialidad": "Vegetariana",
     "tags": ["vegetariano"]
   },
   {
@@ -44,7 +44,7 @@
     "descripcion": "Cono de alga nori relleno con salmón, arroz y vegetales",
     "tipo": "individual",
     "cantidad_piezas": 1,
-    "especialidad": "clásico",
+    "especialidad": "Clásica",
     "tags": ["rápido"]
   },
   {
@@ -56,7 +56,7 @@
     "descripcion": "Mix de 48 piezas: 16 nigiri variados, 16 maki clásicos, 16 uramaki especiales",
     "tipo": "combo",
     "cantidad_piezas": 48,
-    "especialidad": "familiar",
+    "especialidad": "Familiar",
     "tags": ["oferta", "família"]
   },
   {
@@ -68,7 +68,7 @@
     "descripcion": "Tabla del chef con 24 piezas: 8 nigiri mix, 8 sashimi premium, 8 uramaki especiales",
     "tipo": "tabla",
     "cantidad_piezas": 24,
-    "especialidad": "gourmet",
+    "especialidad": "Gourmet",
     "tags": ["premium"]
   },
   {
@@ -80,7 +80,7 @@
     "descripcion": "12 piezas de nigiri de salmón fresco con arroz avinagrado",
     "tipo": "nigiri",
     "cantidad_piezas": 12,
-    "especialidad": "tradicional",
+    "especialidad": "Tradicional",
     "tags": ["clásico"]
   },
   {
@@ -92,7 +92,7 @@
     "descripcion": "10 piezas de uramaki con camarón empanizado y salsa especial",
     "tipo": "uramaki",
     "cantidad_piezas": 10,
-    "especialidad": "crunchy",
+    "especialidad": "Crunchy",
     "tags": ["crujiente"]
   },
   {
@@ -104,7 +104,7 @@
     "descripcion": "Combinación premium de 15 piezas con salmón y palta",
     "tipo": "combo",
     "cantidad_piezas": 15,
-    "especialidad": "fusion",
+    "especialidad": "Fusion",
     "tags": ["nuevo"]
   },
   {
@@ -116,7 +116,7 @@
     "descripcion": "Selección ejecutiva con 8 tipos diferentes de sushi",
     "tipo": "tabla",
     "cantidad_piezas": 24,
-    "especialidad": "variada",
+    "especialidad": "Variada",
     "tags": ["variedad"]
   },
   {
@@ -128,7 +128,7 @@
     "descripcion": "Edición limitada con caviar beluga y ingredientes exclusivos",
     "tipo": "especial",
     "cantidad_piezas": 8,
-    "especialidad": "luxury",
+    "especialidad": "Luxury",
     "tags": ["exclusivo", "lujo"]
   }
 ]

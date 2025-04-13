@@ -13,11 +13,11 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/fukusuke-sushi/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/productos" element={<Products />} />
-      <Route path="/pago" element={<PaymentPage />} />
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/fukusuke-sushi/about" element={<About />} />
+      <Route path="/fukusuke-sushi/contact" element={<Contact />} />
+      <Route path="/fukusuke-sushi/productos" element={<Products />} />
+      <Route path="/fukusuke-sushi/pago" element={<PaymentPage />} />
+      <Route path="/fukusuke-sushi/admin" element={<Admin />} />
     </Routes>
   );
 };
