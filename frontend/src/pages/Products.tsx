@@ -1,122 +1,72 @@
-import { useState } from "react";
-import styled from "styled-components";
-import productsData from "../data/products.json";
-import { useCart } from "../context/CartContext";
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useCart } from '../context/CartContext';
+import { getProducts } from '../services/api';
 
-type Product = {
-  id: number;
-  nombre: string;
-  precio: number;
-  disponible: number;
-  img_url: string;
-  descripcion?: string;
-  tipo?: string;
-  cantidad_piezas?: number;
-  especialidad?: string;
-  tags?: string[];
-};
-
-const Products: React.FC = () => {
+const Products = () => {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar los productos');
+        setLoading(false);
+        console.error(err);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  if (loading) return <LoadingMessage>Cargando productos...</LoadingMessage>;
+  if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
   return (
-      <>
-    <Container className="container mt-4">
-      <div className="row">
-        {productsData.map((product: Product) => {
-          const isAvailable = product.disponible > 0;
-
-          return (
-            <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-              <div className={`product-card ${!isAvailable ? "disabled" : ""}`}>
-                <img
-                  className="product-image"
-                  src={product.img_url}
-                  alt={product.nombre}
-                  onClick={() => setSelectedProduct(product)}
-
-                />
-                <div className="product-body">
-                  <h5>{product.nombre}</h5>
-                  {!isAvailable ? (
-                    <small className="text-unavailable">Producto no disponible</small>
-                  ) : (
-                    <small className="text-muted">{product.especialidad}</small>
-                  )}
-                  <p className="product-price">${product.precio}</p>
-                  <button
-                    className="buy-button"
-                    disabled={!isAvailable}
-                    onClick={() =>
-                      addToCart({
-                        id: product.id,
-                        nombre: product.nombre,
-                        precio: product.precio,
-                        img_url: product.img_url,
-                        cantidad: 1,
-                      })
-                    }
-                  >
-                    {isAvailable ? "Añadir al carrito" : "Agotado"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </Container>
-        {selectedProduct && (
-            <ModalOverlay onClick={() => setSelectedProduct(null)}>
-              <ModalContent onClick={(e) => e.stopPropagation()}>
-                <CloseButton onClick={() => setSelectedProduct(null)}>&times;</CloseButton>
-                <ModalImage src={selectedProduct.img_url} alt={selectedProduct.nombre} />
-                <ModalBody>
-                  <h3>{selectedProduct.nombre}</h3>
-                  <div className="price-section">
-                    <p className="price">${selectedProduct.precio.toLocaleString()}</p>
-                  </div>
-
-                  {selectedProduct.descripcion && (
-                      <p className="description">{selectedProduct.descripcion}</p>
-                  )}
-
-                  <div className="details-grid">
-                    {selectedProduct.cantidad_piezas && (
-                        <div className="detail-item">
-                          <span>Piezas:</span>
-                          <strong>{selectedProduct.cantidad_piezas}</strong>
-                        </div>
-                    )}
-                  </div>
-
-                  <AddToCartButton
-                      onClick={() => {
-                        addToCart({
-                          id: selectedProduct.id,
-                          nombre: selectedProduct.nombre,
-                          precio: selectedProduct.precio,
-                          img_url: selectedProduct.img_url,
-                          cantidad: 1,
-                        });
-                        setSelectedProduct(null);
-                      }}
-                      disabled={selectedProduct.disponible <= 0}
-                  >
-                    {selectedProduct.disponible > 0
-                        ? "Añadir al carrito"
-                        : "Producto agotado"}
-                  </AddToCartButton>
-                </ModalBody>
-              </ModalContent>
-            </ModalOverlay>
-        )}
-      </>
+    <ProductsContainer>
+      <Title>Nuestros Productos</Title>
+      <ProductsGrid>
+        {products.map(product => (
+          <ProductCard key={product.id}>
+            <ProductImage src={product.img_url} alt={product.nombre} />
+            <ProductInfo>
+              <ProductName>{product.nombre}</ProductName>
+              <ProductDescription>{product.descripcion}</ProductDescription>
+              <ProductPrice>${product.precio.toLocaleString('es-CL')}</ProductPrice>
+              <ProductStock>
+                Disponible: {product.disponible} unidades
+              </ProductStock>
+              <AddToCartButton onClick={() => addToCart(product)}>
+                Agregar al Carrito
+              </AddToCartButton>
+            </ProductInfo>
+          </ProductCard>
+        ))}
+      </ProductsGrid>
+    </ProductsContainer>
   );
 };
 
-export default Products;
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem;
+  text-align: center;
+`;
 
 // ---------- Estilos ----------
 const Container = styled.div`
@@ -260,20 +210,82 @@ const ModalBody = styled.div`
   }
 `;
 
-const AddToCartButton = styled.button`
-  background-color: #e00000;
-  color: white;
-  border: none;
-  padding: 0.8rem;
-  border-radius: 10px;
-  margin-top: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: background 0.3s;
-  cursor: pointer;
+const ProductsContainer = styled.div`
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h1`
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+`;
+
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+`;
+
+const ProductCard = styled.div`
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
 
   &:hover {
-    background-color: #c00;
+    transform: translateY(-5px);
+  }
+`;
+
+const ProductImage = styled.img`
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+`;
+
+const ProductInfo = styled.div`
+  padding: 1rem;
+`;
+
+const ProductName = styled.h3`
+  margin: 0;
+  color: #333;
+`;
+
+const ProductDescription = styled.p`
+  color: #666;
+  margin: 0.5rem 0;
+`;
+
+const ProductPrice = styled.p`
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2e7d32;
+  margin: 0.5rem 0;
+`;
+
+const ProductStock = styled.p`
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+`;
+
+const AddToCartButton = styled.button`
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #1b5e20;
   }
 
   &:disabled {
@@ -281,3 +293,5 @@ const AddToCartButton = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export default Products;
