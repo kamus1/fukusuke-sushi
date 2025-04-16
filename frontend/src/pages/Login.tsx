@@ -16,7 +16,7 @@ const Login = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5 pb-5">
       <h2>Iniciar sesión</h2>
       <form onSubmit={handleLogin}>
         <div className="mb-3">
