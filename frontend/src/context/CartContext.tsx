@@ -52,11 +52,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const decreaseQty = (id: number) => {
     setCart(prev =>
-      prev.map(p =>
-        p.id === id
-          ? { ...p, cantidad: p.cantidad > 1 ? p.cantidad - 1 : 1 }
-          : p
-      )
+      prev.flatMap(p => {
+        if (p.id === id) {
+          if (p.cantidad > 1) {
+            return [{ ...p, cantidad: p.cantidad - 1 }];
+          } else {
+            return []; //eliminar el producto si la cantidad es 1
+          }
+        }
+        return [p];
+      })
     );
   };
 
