@@ -364,11 +364,14 @@ const Admin = () => {
     </AdminContainer>
   );
 };
-
 const AdminContainer = styled.div`
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -376,6 +379,13 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const Title = styled.h1`
@@ -394,6 +404,10 @@ const FormContainer = styled.div`
     margin-bottom: 1.5rem;
     color: #333;
   }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const FormGrid = styled.div`
@@ -403,6 +417,10 @@ const FormGrid = styled.div`
 
   .full-width {
     grid-column: 1 / -1;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -415,14 +433,28 @@ const FormField = styled.div`
     font-weight: 500;
     color: #333;
   }
+
+  input, select, textarea {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
 `;
 
 const TableWrapper = styled.div`
-  max-height: 600px;
-  overflow-y: auto;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   background: white;
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+  }
 `;
 
 const ProductsTable = styled.table`
@@ -433,8 +465,6 @@ const ProductsTable = styled.table`
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
-  position: relative;
-  
   thead {
     position: sticky;
     top: 0;
@@ -453,6 +483,11 @@ const ProductsTable = styled.table`
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #eee;
+
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+    }
   }
 
   tr:hover {
@@ -460,10 +495,10 @@ const ProductsTable = styled.table`
   }
 
   input, select, textarea {
+    width: 100%;
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 100%;
   }
 
   textarea {
@@ -477,6 +512,7 @@ const ButtonGroup = styled.div`
   gap: 0.5rem;
   justify-content: center;
   margin-top: 1rem;
+  flex-wrap: wrap;
 `;
 
 const Button = styled.button`
@@ -489,6 +525,11 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const CreateButton = styled(Button)`
@@ -503,7 +544,7 @@ const CreateButton = styled(Button)`
 `;
 
 const EditButton = styled(Button)`
-  background: #FFC107; //FFC107
+  background: #FFC107;
   padding: 0.5rem;
 
   &:hover {
