@@ -413,7 +413,7 @@ const ProductsTable = styled.table`
   }
 
   th {
-    background: #FF4848;
+    background: #e00000;
     color: white;
   }
 
@@ -465,7 +465,7 @@ const CreateButton = styled(Button)`
 `;
 
 const EditButton = styled(Button)`
-  background: #FFC107;
+  background: #FFC107; //FFC107
   padding: 0.5rem;
 
   &:hover {
@@ -475,7 +475,7 @@ const EditButton = styled(Button)`
 `;
 
 const DeleteButton = styled(Button)`
-  background: #FF4848;
+  background: #e00000;
   padding: 0.5rem;
 
   &:hover {
