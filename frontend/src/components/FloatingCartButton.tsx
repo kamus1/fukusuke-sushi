@@ -7,7 +7,7 @@
   const FloatingCartButton = ({ onClick }: Props) => {
     const { cart } = useCart();
     const total = cart.reduce((acc, item) => acc + item.cantidad, 0);
-
+    if (cart.length === 0) return null; // Oculta el botón si el carrito está vacío
     return (
       <CartButton onClick={onClick}>
         <FaShoppingCart size={25} className="cartIcon"  />

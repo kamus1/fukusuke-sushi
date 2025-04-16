@@ -2,326 +2,250 @@ import { useCart } from "../context/CartContext";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-
 type Props = {
   show: boolean;
   onClose: () => void;
 };
 
-interface StyledProps {
-  show?: boolean;
-}
-
 const CartModal = ({ show, onClose }: Props) => {
   const { cart, increaseQty, decreaseQty, removeFromCart } = useCart();
-  const total = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
   const navigate = useNavigate();
-
+  const total = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  
   const handlePayment = () => {
-
-    onClose(); // Cerrar el modal
-    navigate('/fukusuke-sushi/pago', { state: { total } }); // Pasar el total como estado
-    
+    onClose();
+    navigate("/fukusuke-sushi/pago", { state: { total } });
   };
 
   return (
-    <Overlay show={show}>
-      <ModalContainer show={show}>
+    <Overlay show={show} onClick={onClose}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>×</CloseButton>
-        <ModalContent>
-          {/* Mostrar solo en pantallas grandes */}
-          <ProductView className="hide-on-mobile">
-            <Title>Productos</Title>
-            <ProductGrid>
-              {cart.map(item => (
-                <Card key={item.id}>
-                  <ProductImage src={item.img_url} alt={item.nombre} />
-                  <ProductInfo>
-                    <p>{item.nombre}</p>
-                    <strong>${item.precio.toLocaleString("es-CL")}</strong>
-                  </ProductInfo>
-                </Card>
-              ))}
-            </ProductGrid>
-          </ProductView>
-
-          {/* Siempre visible: listado de productos agregados */}
-          <CartDetails>
-            <Title>Resumen</Title>
-            <CartList>
-              {cart.map(item => (
-                <CartItem key={item.id}>
-                  <ItemInfo>
-                    <span>{item.nombre}</span>
-                    <strong>${(item.precio * item.cantidad).toLocaleString("es-CL")}</strong>
-                  </ItemInfo>
-                  <ItemControls>
-                    <QuantityButton onClick={() => decreaseQty(item.id)}>-</QuantityButton>
-                    <QuantityDisplay>{item.cantidad}</QuantityDisplay>
-                    <QuantityButton onClick={() => increaseQty(item.id)}>+</QuantityButton>
-                    <DeleteButton onClick={() => removeFromCart(item.id)}>×</DeleteButton>
-                  </ItemControls>
-                </CartItem>
-              ))}
-            </CartList>
-            <Divider />
-            <TotalText>Total: <strong>${total.toLocaleString("es-CL")}</strong></TotalText>
-            <PayButton onClick={handlePayment}>Pagar</PayButton>
-
-          </CartDetails>
-        </ModalContent>
+        <Header>Carrito de Compras</Header>
+        <ItemsContainer>
+          {cart.map((item) => (
+            <CartItem key={item.id}>
+              <ItemImage src={item.img_url} alt={item.nombre} />
+              <ItemDetails>
+                <ItemTop>
+                  <span>{item.nombre}</span>
+                  <span>${(item.precio * item.cantidad).toLocaleString("es-CL")}</span>
+                </ItemTop>
+                <ItemPrice>${item.precio.toLocaleString("es-CL")} c/u</ItemPrice>
+                <ItemControls>
+                  <QtyButton onClick={() => decreaseQty(item.id)}>-</QtyButton>
+                  <span>{item.cantidad}</span>
+                  <QtyButton onClick={() => increaseQty(item.id)}>+</QtyButton>
+                  <RemoveButton onClick={() => removeFromCart(item.id)}>Quitar</RemoveButton>
+                </ItemControls>
+              </ItemDetails>
+            </CartItem>
+          ))}
+        </ItemsContainer>
+        <BottomSection>
+          <Subtotal>
+            <span>Subtotal</span>
+            <strong>${total.toLocaleString("es-CL")}</strong>
+          </Subtotal>
+          <Note>Costo despacho será calculado al finalizar tu órden.</Note>
+          <ConfirmButton onClick={handlePayment}>Confirmar Orden</ConfirmButton>
+          <BackToShop onClick={onClose}>o Continua Comprando →</BackToShop>
+        </BottomSection>
       </ModalContainer>
     </Overlay>
   );
 };
 
-// --- ESTILOS ---
+export default CartModal;
 
-const Overlay = styled.div<StyledProps>`
+interface StyledProps {
+  show?: boolean;
+}
+
+export const Overlay = styled.div<StyledProps>`
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-  ${props => props.show && `
-    opacity: 1;
-    visibility: visible;
-    pointer-events: all;
-  `}
+  z-index: 1000;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  transition: opacity 0.3s ease;
 `;
 
-const ModalContainer = styled.div<StyledProps>`
-  background: #FF4848;
-  width: 95%;
-  max-width: 1200px;
-  height: 90vh;
-  border-radius: 20px;
-  padding: 1rem;
+export const ModalContainer = styled.div`
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(100px) scale(0.95);
-  opacity: 0;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-  ${props => props.show && `
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  `}
-
-  @media (max-width: 768px) {
-    height: auto;
-    max-height: 80vh;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  font-size: 2rem;
-  background: transparent;
-  color: black;
-  border: none;
-  cursor: pointer;
-`;
-
-const ModalContent = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 1rem;
   overflow: hidden;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    overflow-y: auto;
+  @media (min-width: 768px) {
+    max-width: 640px;
   }
-`;
 
-const ProductView = styled.div`
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const ProductGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.8rem;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-  max-height: 100%;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 1024px) {
+    max-width: 800px;
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    width: 90%;
+    height: 90vh;
   }
 `;
 
-const Card = styled.div`
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.6rem;
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
 `;
 
-const ProductImage = styled.img`
-  width: 100%;
-  height: 120px;
+export const Header = styled.h2`
+  padding: 1.5rem 1.5rem 1rem;
+  font-size: 1.3rem;
+  margin: 0;
+`;
+
+export const ItemsContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1.5rem;
+`;
+
+export const CartItem = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+`;
+
+export const ItemImage = styled.img`
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-`;
-
-const ProductInfo = styled.div`
-  padding: 0.5rem;
-  color: black;
-`;
-
-const CartDetails = styled.div`
-  flex: 1;
-  background: white;
-  border-radius: 15px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  color: black;
-
-  @media (max-width: 768px) {
-    flex: none;
-    overflow: visible;
-  }
-`;
-
-const CartList = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  overflow-y: auto;
-
-  @media (max-width: 768px) {
-    margin-bottom: 1rem;
-  }
-`;
-
-const CartItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
+
+  @media (min-width: 1024px) {
+    width: 120px;
+    height: 120px;
+  }
 `;
 
-const ItemInfo = styled.div`
+export const ItemDetails = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const ItemTop = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  font-weight: 600;
 `;
 
-const ItemControls = styled.div`
+export const ItemPrice = styled.small`
+  color: #777;
+`;
+
+export const ItemControls = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const QuantityButton = styled.button`
-  background: #FF4848;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+export const QtyButton = styled.button`
+  background: white;
+  color: grey;
+  border: 1px solid #dbdbdb;
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
   font-size: 1rem;
-  padding: 0;
+  width: 35px;
+  cursor: pointer;
+
+  &:hover{
+    background: #d60000;
+    color: white;
+  }
+`;
+
+export const RemoveButton = styled.button`
+  background: transparent;
+  color: #cc0000;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
 
   &:hover {
-    background: #ff3333;
+    text-decoration: underline;
   }
 `;
 
-const QuantityDisplay = styled.span`
-  min-width: 24px;
-  text-align: center;
-  font-weight: bold;
+export const BottomSection = styled.div`
+  border-top: 1px solid #ddd;
+  padding: 1rem 1.5rem;
+  background: white;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
 `;
 
-const DeleteButton = styled(QuantityButton)`
-  background: #dc3545;
-  font-size: 1.2rem;
-
-  &:hover {
-    background: #c82333;
-  }
+export const Subtotal = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
 `;
 
-const Divider = styled.hr`
-  margin: 1rem 0;
+export const Note = styled.small`
+  color: #666;
 `;
 
-const TotalText = styled.div`
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  text-align: right;
-
-  @media (max-width: 768px) {
-    margin: 1rem 0;
-  }
-`;
-
-const PayButton = styled.button`
-  background: black;
+export const ConfirmButton = styled.button`
+  width: 100%;
+  background: #d60000;
   color: white;
   border: none;
-  padding: 0.8rem;
-  border-radius: 15px;
-  font-size: 1.1rem;
+  padding: 0.9rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  width: 100%;
 
-  @media (max-width: 768px) {
-    position: sticky;
-    bottom: 0;
-    margin-top: auto;
+  &:hover {
+    background: #b00000;
   }
 `;
 
-const Title = styled.h2`
-  color: white;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+export const BackToShop = styled.div`
+  margin-top: 0.8rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #cc0000;
+  cursor: pointer;
 
-  ${CartDetails} & {
-    color: black;
+  &:hover {
+    text-decoration: underline;
   }
 `;
-
-export default CartModal;
