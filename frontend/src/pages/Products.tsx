@@ -103,7 +103,7 @@ const Products: React.FC = () => {
               <div className="details-grid">
                 {selectedProduct.cantidad_piezas && (
                   <div className="detail-item">
-                    <span>Piezas:</span>
+                    <span>Piezas: </span>
                     <strong>{selectedProduct.cantidad_piezas}</strong>
                   </div>
                 )}
