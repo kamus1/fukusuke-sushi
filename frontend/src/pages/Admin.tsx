@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { getProducts, updateProduct, createProduct, deleteProduct } from '../services/api';
+
 
 interface Product {
   id: number;
@@ -36,6 +38,7 @@ const Admin = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Product>(emptyProduct);
+  const navigate = useNavigate();
 
   // Cargar productos de la API
   const loadProducts = async () => {
@@ -49,8 +52,13 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    loadProducts();
-  }, []);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/fukusuke-sushi/login');  // Redirige a login si no hay token
+    } else {
+      loadProducts(); // Cargar productos si hay token
+    }
+  }, [navigate]); // Asegúrate de que navigate esté en las dependencias
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product.id);

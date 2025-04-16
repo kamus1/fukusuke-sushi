@@ -16,10 +16,12 @@ export const getProducts = async () => {
 
 export const updateProduct = async (id: number, productData: any) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/products/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(productData),
     });
@@ -40,10 +42,12 @@ export const updateProduct = async (id: number, productData: any) => {
 
 export const createProduct = async (productData: any) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(productData),
     });
@@ -62,8 +66,13 @@ export const createProduct = async (productData: any) => {
 
 export const deleteProduct = async (id: number) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/products/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {
@@ -77,3 +86,25 @@ export const deleteProduct = async (id: number) => {
     throw error;
   }
 }; 
+
+export const loginAdmin = async (username: string, password: string) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al iniciar sesión');
+    }
+
+    const data = await response.json();
+    localStorage.setItem('token', data.token);  // Guardar token localmente
+    return data;
+  } catch (error) {
+    console.error('Error en loginAdmin:', error);
+    throw error;
+  }
+};

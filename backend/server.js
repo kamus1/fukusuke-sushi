@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const connectDB = require('./config/db'); // Asegúrate de tener la conexión a MongoDB configurada
+const authRoutes = require('./routes/auth'); // Importa la ruta de autenticación
 require('dotenv').config();
 
 const app = express();
@@ -23,7 +25,8 @@ app.use((req, res, next) => {
 
 // Rutas
 const productsRouter = require('./routes/products');
-app.use('/api/products', productsRouter);
+app.use('/routes/products', productsRouter);
+app.use('/routes/auth.js', authRoutes);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -35,3 +38,4 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 }); 
+
