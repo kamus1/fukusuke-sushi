@@ -7,6 +7,7 @@ import FloatingCartButton from "./components/FloatingCartButton";
 import CartModal from "./components/CartModal";
 import { useState } from "react";
 
+import '@fontsource/poppins/index.css'; // importa la fuente Poppins
 const App = () => {
   const [showCart, setShowCart] = useState(false);
 
@@ -32,6 +33,7 @@ const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-family: "Poppins";
 `;
 
 const ContentWrapper = styled.main`
