@@ -135,62 +135,75 @@ const Contactform = () => {
   );
 };
 
-// Estilos
-const PageContainer = styled.div`
+export default Contactform;
+
+// Contenedor principal de la página
+export const PageContainer = styled.div`
   min-height: 100vh;
   padding: 2rem;
   background-color: #ffffff;
+  overflow-x: hidden;
+
+  @media (max-width: 768px) {
+    padding: 1rem; /* menos padding lateral */
+  }
 `;
 
-const FormTitle = styled.h1`
+// Título del formulario
+export const FormTitle = styled.h1`
   color: #000000;
   text-align: left;
-  margin-bottom: 1rem;  /* Reducido el margen inferior */
+  margin-bottom: 1rem;
   font-size: 2.5rem;
   font-weight: 600;
   width: 100%;
-  max-width: 700px;  /* Mismo ancho que el formulario */
-  padding-left: 1rem; /* Alineación con el contenido del formulario */
+  max-width: 700px;
+  padding-left: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    padding-left: 0;
+  }
 `;
 
-const ContentWrapper = styled.div`
+// Contenedor de la parte izquierda y derecha
+export const ContentWrapper = styled.div`
   display: flex;
   height: calc(100vh - 10rem);
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     height: auto;
   }
 `;
 
-const LeftHalf = styled.div`
+export const LeftHalf = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   padding: 2rem;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     padding: 1rem;
   }
 `;
 
-const RightHalf = styled.div`
+export const RightHalf = styled.div`
   width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  
   @media (max-width: 768px) {
     width: 100%;
     padding: 1rem;
   }
 `;
 
-const FormWrapper = styled.form`
+export const FormWrapper = styled.form`
   width: 100%;
   max-width: 700px;
   padding: 2rem;
@@ -200,14 +213,17 @@ const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
   min-height: 550px;
-  
+  margin: 0 auto;
+
   @media (max-width: 768px) {
-    min-height: 450px;
-    padding: 1.5rem;
+    max-width: 100%;
+    padding: 1rem;
+    border-radius: 10px;
   }
 `;
 
-const FormContent = styled.div`
+// Contenido de campos del formulario
+export const FormContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -216,38 +232,39 @@ const FormContent = styled.div`
   padding-bottom: 1rem;
 `;
 
-const FormFooter = styled.div`
+// Pie de formulario
+export const FormFooter = styled.div`
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Línea divisoria opcional */
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
-const FormGroup = styled.div`
+export const FormGroup = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const Label = styled.label`
+export const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
   color: #ffffff;
   font-weight: 500;
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
   width: 100%;
   padding: 0.8rem;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
   background-color: rgba(255, 255, 255, 0.9);
-  
+
   &:focus {
     outline: none;
     background-color: white;
   }
 `;
 
-const TextArea = styled.textarea`
+export const TextArea = styled.textarea`
   width: 100%;
   padding: 0.8rem;
   border: none;
@@ -256,29 +273,31 @@ const TextArea = styled.textarea`
   min-height: 120px;
   resize: vertical;
   background-color: rgba(255, 255, 255, 0.9);
-  
+
   &:focus {
     outline: none;
     background-color: white;
   }
 `;
 
-const CheckboxGroup = styled.div`
+export const CheckboxGroup = styled.div`
   display: flex;
   align-items: center;
   margin: 1.5rem 0;
+  flex-wrap: wrap;
 `;
 
-const CheckboxInput = styled.input`
+export const CheckboxInput = styled.input`
   margin-right: 0.8rem;
 `;
 
-const CheckboxLabel = styled.label`
+export const CheckboxLabel = styled.label`
   color: #ffffff;
   font-size: 0.9rem;
 `;
 
-const SubmitButton = styled.button`
+// Botón de enviar
+export const SubmitButton = styled.button`
   width: 100%;
   padding: 1rem;
   background-color: white;
@@ -290,40 +309,50 @@ const SubmitButton = styled.button`
   cursor: pointer;
   transition: all 0.3s;
   margin-top: 1rem;
-  
+
   &:hover {
     background-color: #f5f5f5;
     transform: translateY(-2px);
   }
 `;
 
-const SocialLinks = styled.div`
+// Estilo redes sociales
+export const SocialLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  max-width: 500px;
+
+  @media (max-width: 768px) {
+    align-items: flex-start;
+  }
 `;
 
-const SocialLink = styled.a`
+export const SocialLink = styled.a`
   display: flex;
   align-items: center;
   gap: 1.5rem;
   color: #333333;
   text-decoration: none;
   transition: transform 0.3s;
-  
+
   &:hover {
     transform: translateX(5px);
   }
 `;
 
-const SocialIcon = styled.div`
-  font-size: 6rem;
+export const SocialIcon = styled.div`
+  font-size: 5rem;
   color: #d32f2f;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 `;
 
-const SocialText = styled.span`
-  font-size: 3rem;
-`;
+export const SocialText = styled.span`
+  font-size: 2.5rem;
 
-export default Contactform;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
