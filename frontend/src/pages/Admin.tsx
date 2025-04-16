@@ -5,12 +5,12 @@ import { getProducts, updateProduct, createProduct, deleteProduct } from '../ser
 interface Product {
   id: number;
   nombre: string;
-  precio: number;
-  disponible: number;
+  precio: number | string;
+  disponible: number | string;
   img_url: string;
   descripcion: string;
   tipo: string;
-  cantidad_piezas: number;
+  cantidad_piezas: number | string;
   especialidad: string;
   tags: string[];
 }
@@ -18,12 +18,12 @@ interface Product {
 const emptyProduct: Product = {
   id: 0,
   nombre: '',
-  precio: 0,
-  disponible: 0,
+  precio: '',
+  disponible: '',
   img_url: '',
   descripcion: '',
   tipo: 'tabla',
-  cantidad_piezas: 0,
+  cantidad_piezas: '',
   especialidad: 'Clásica',
   tags: []
 };
@@ -95,7 +95,13 @@ const Admin = () => {
 
   const handleCreate = async () => {
     try {
-      const createdProduct = await createProduct(newProduct);
+      const productToCreate = {
+        ...newProduct,
+        precio: Number(newProduct.precio),
+        disponible: Number(newProduct.disponible),
+        cantidad_piezas: Number(newProduct.cantidad_piezas)
+      };
+      const createdProduct = await createProduct(productToCreate);
       setProducts([...products, createdProduct]);
       setShowCreateForm(false);
       setNewProduct(emptyProduct);
@@ -178,10 +184,10 @@ const Admin = () => {
                 value={newProduct.tipo}
                 onChange={(e) => handleChange(e, true)}
               >
-                <option value="tabla">Tabla</option>
-                <option value="individual">Individual</option>
-                <option value="combo">Combo</option>
-                <option value="especial">Especial</option>
+                <option value="Tabla">Tabla</option>
+                <option value="Individual">Individual</option>
+                <option value="Combo">Combo</option>
+                <option value="Especial">Especial</option>
               </select>
             </FormField>
             <FormField>
@@ -236,106 +242,125 @@ const Admin = () => {
         </FormContainer>
       )}
 
-      <ProductsTable>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map(product => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td>
-                {editingProduct === product.id ? (
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={editedProduct?.nombre || ''}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  product.nombre
-                )}
-              </td>
-              <td>
-                {editingProduct === product.id ? (
-                  <input
-                    type="number"
-                    name="precio"
-                    value={editedProduct?.precio || 0}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  `$${product.precio.toLocaleString('es-CL')}`
-                )}
-              </td>
-              <td>
-                {editingProduct === product.id ? (
-                  <input
-                    type="number"
-                    name="disponible"
-                    value={editedProduct?.disponible || 0}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  product.disponible
-                )}
-              </td>
-              <td>
-                {editingProduct === product.id ? (
-                  <select
-                    name="tipo"
-                    value={editedProduct?.tipo || ''}
-                    onChange={handleChange}
-                  >
-                    <option value="tabla">Tabla</option>
-                    <option value="individual">Individual</option>
-                    <option value="combo">Combo</option>
-                    <option value="especial">Especial</option>
-                  </select>
-                ) : (
-                  product.tipo
-                )}
-              </td>
-              <td>
-                {editingProduct === product.id ? (
-                  <textarea
-                    name="descripcion"
-                    value={editedProduct?.descripcion || ''}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  product.descripcion
-                )}
-              </td>
-              <td>
-                {editingProduct === product.id ? (
-                  <ButtonGroup>
-                    <SaveButton onClick={handleSave}>Guardar</SaveButton>
-                    <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-                  </ButtonGroup>
-                ) : (
-                  <ButtonGroup>
-                    <EditButton onClick={() => handleEdit(product)}>
-                      <span role="img" aria-label="edit">✏️</span>
-                    </EditButton>
-                    <DeleteButton onClick={() => handleDelete(product.id)}>
-                      <span role="img" aria-label="delete">🗑️</span>
-                    </DeleteButton>
-                  </ButtonGroup>
-                )}
-              </td>
+      <TableWrapper>
+        <ProductsTable>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Tipo</th>
+              <th>Imagen URL</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </ProductsTable>
+          </thead>
+          <tbody>
+            {products.map(product => (
+              <tr key={product.id}>
+                <td>{product.id}</td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <input
+                      type="text"
+                      name="nombre"
+                      value={editedProduct?.nombre || ''}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    product.nombre
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <input
+                      type="number"
+                      name="precio"
+                      value={editedProduct?.precio || 0}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    `$${product.precio.toLocaleString('es-CL')}`
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <input
+                      type="number"
+                      name="disponible"
+                      value={editedProduct?.disponible || 0}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    product.disponible
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <select
+                      name="tipo"
+                      value={editedProduct?.tipo || ''}
+                      onChange={handleChange}
+                    >
+                      <option value="Tabla">Tabla</option>
+                      <option value="Individual">Individual</option>
+                      <option value="Combo">Combo</option>
+                      <option value="Especial">Especial</option>
+                    </select>
+                  ) : (
+                    product.tipo
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <input
+                      type="text"
+                      name="img_url"
+                      value={editedProduct?.img_url || ''}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    <img 
+                      src={product.img_url} 
+                      alt={product.nombre} 
+                      style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                    />
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <textarea
+                      name="descripcion"
+                      value={editedProduct?.descripcion || ''}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    product.descripcion
+                  )}
+                </td>
+                <td>
+                  {editingProduct === product.id ? (
+                    <ButtonGroup>
+                      <SaveButton onClick={handleSave}>Guardar</SaveButton>
+                      <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
+                    </ButtonGroup>
+                  ) : (
+                    <ButtonGroup>
+                      <EditButton onClick={() => handleEdit(product)}>
+                        <span role="img" aria-label="edit">✏️</span>
+                      </EditButton>
+                      <DeleteButton onClick={() => handleDelete(product.id)}>
+                        <span role="img" aria-label="delete">🗑️</span>
+                      </DeleteButton>
+                    </ButtonGroup>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </ProductsTable>
+      </TableWrapper>
     </AdminContainer>
   );
 };
@@ -356,12 +381,6 @@ const HeaderContainer = styled.div`
 const Title = styled.h1`
   color: #000000;
   margin: 0;
-`;
-
-const TopActions = styled.div`
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: flex-end;
 `;
 
 const FormContainer = styled.div`
@@ -398,6 +417,14 @@ const FormField = styled.div`
   }
 `;
 
+const TableWrapper = styled.div`
+  max-height: 600px;
+  overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: white;
+`;
+
 const ProductsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -406,15 +433,26 @@ const ProductsTable = styled.table`
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
-  th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+  position: relative;
+  
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   th {
     background: #e00000;
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
   }
 
   tr:hover {
