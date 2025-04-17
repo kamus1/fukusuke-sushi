@@ -6,7 +6,8 @@ import Products from "../pages/Products";
 import PaymentPage from "../pages/PaymentPage";
 import Admin from "../pages/Admin";
 import Login from "../pages/Login";
-import ProtectedRoute from "./ProtectedRoute";
+import Register from '../pages/Register';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       <Route path="/fukusuke-sushi/productos" element={<Products />} />
       <Route path="/fukusuke-sushi/pago" element={<PaymentPage />} />
       <Route path="/fukusuke-sushi/login" element={<Login />} />
+      <Route path="/fukusuke-sushi/register" element={<Register />} />
       <Route
         path="/fukusuke-sushi/admin"
         element={
