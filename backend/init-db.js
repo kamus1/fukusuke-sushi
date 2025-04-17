@@ -1,29 +1,50 @@
 const mongoose = require('mongoose');
+const User = require('./models/User');
 const Product = require('./models/Product');
+const bcrypt = require('bcryptjs');
 const products = require('../frontend/src/data/products.json');
 require('dotenv').config();
 
-async function initDB() {
+const createAdminUser = async () => {
   try {
-    // Conectar a MongoDB
+    // Verificar si ya existe un admin
+    const adminExists = await User.findOne({ role: 'admin' });
+    
+    if (!adminExists) {
+      // Crear usuario admin por defecto
+      const adminUser = new User({
+        email: 'admin@fukusuke.com',
+        password: 'admin123', // Se encriptará automáticamente por el middleware del modelo
+        role: 'admin',
+        nombre: 'Administrador'
+      });
+
+      await adminUser.save();
+      console.log('Usuario administrador creado exitosamente');
+    }
+  } catch (error) {
+    console.error('Error al crear usuario administrador:', error);
+  }
+};
+
+const initDatabase = async () => {
+  try {
+    // Conexión a MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Conectado a MongoDB');
 
-    // Limpiar la colección existente
+    // Crear usuario admin
+    await createAdminUser();
+
+    // Limpiar y reinsertar productos
     await Product.deleteMany({});
-    console.log('Colección limpiada');
-
-    // Insertar los productos
     await Product.insertMany(products);
-    console.log('Productos insertados correctamente');
-
-    // Cerrar la conexión
-    await mongoose.connection.close();
-    console.log('Conexión cerrada');
+    
+    console.log('Base de datos inicializada correctamente');
+    
   } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
+    console.error('Error al inicializar la base de datos:', error);
   }
-}
+};
 
-initDB(); 
+module.exports = initDatabase; 

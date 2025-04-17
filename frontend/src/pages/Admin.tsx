@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { getProducts, updateProduct, createProduct, deleteProduct } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -36,6 +37,15 @@ const Admin = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Product>(emptyProduct);
+  const navigate = useNavigate();
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+
+  useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      navigate('/fukusuke-sushi/');
+    }
+  }, [user, navigate]);
 
   // Cargar productos de la API
   const loadProducts = async () => {
@@ -43,7 +53,7 @@ const Admin = () => {
       const data = await getProducts();
       setProducts(data);
     } catch (err) {
-      setError('Error al cargar los productos');
+      setError('Error al cargar los productos');  
       console.error(err);
     }
   };
