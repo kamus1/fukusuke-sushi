@@ -6,6 +6,7 @@ require('dotenv').config();
 // Importar rutas
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
 
 const app = express();
 
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Usar rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Manejo de errores global
 app.use((err, req, res, next) => {
