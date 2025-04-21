@@ -140,11 +140,4 @@ const LogoutButton = styled.button`
   }
 `;
 
-const LoginIcon = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  margin-left: 10px;
-`;
-
 export default Navbar;
