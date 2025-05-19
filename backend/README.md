@@ -29,3 +29,5 @@ Clave	123
 
 
 4. serás redirigido al pago aceptado
+ -> problema: si no es una url real te da un error 404 el redirigir a http://localhost:5173/fukusuke-sushi/paymentsuccess
+ pero si se recarga la pagina funciona, cosas de flow
