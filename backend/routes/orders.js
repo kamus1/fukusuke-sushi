@@ -38,3 +38,31 @@ router.get('/ticket/:ticketId', auth, async (req, res) => {
 });
 
 module.exports = router; 
+
+
+// para crear pedidos como invitado (sin autenticación)
+router.post('/public', async (req, res) => {
+  try {
+    const { items, direccionEnvio, total, email } = req.body;
+
+    // Validaciones mínimas
+    if (!email || !items || items.length === 0 || !total || !direccionEnvio) {
+      return res.status(400).json({ msg: 'Faltan datos del pedido' });
+    }
+
+    const order = new Order({
+      user: null, // no está asociado a un usuario
+      email,
+      items,
+      direccionEnvio,
+      total,
+      estado: 'pendiente' // o 'pagado' si prefieres
+    });
+
+    await order.save();
+    res.status(201).json(order);
+  } catch (error) {
+    console.error('Error al crear pedido público:', error);
+    res.status(500).json({ msg: 'Error al crear el pedido como invitado' });
+  }
+});
