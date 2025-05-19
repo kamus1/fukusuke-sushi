@@ -10,7 +10,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/fukusuke-sushi/login/');
+    navigate('/login/');
   };
 
   return (
@@ -37,7 +37,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/fukusuke-sushi/"
+                to="/"
                 end
               >
                 Home
@@ -48,7 +48,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/fukusuke-sushi/productos"
+                to="/productos"
                 end
               >
                 Productos
@@ -59,7 +59,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `nav-link${isActive ? " active" : ""}`
                 }
-                to="/fukusuke-sushi/contact"
+                to="/contact"
               >
                 Contacto
               </NavLink>
@@ -70,7 +70,7 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     `nav-link${isActive ? " active" : ""}`
                   }
-                  to="/fukusuke-sushi/admin"
+                  to="/admin"
                 >
                   Admin
                 </NavLink>
@@ -84,7 +84,7 @@ const Navbar = () => {
               ) : (
                 <NavLink
                   className="nav-link"
-                  to="/fukusuke-sushi/login"
+                  to="/login"
                   title="Iniciar sesión"
                 >
                   Iniciar sesión

@@ -7,6 +7,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
+const flowRoutes = require('./routes/flow');
 
 const app = express();
 
@@ -23,6 +24,20 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/flow', flowRoutes);
+
+
+// Endpoint /api/health 
+app.get('/api/health', async (req, res) => {
+  const mongoState = mongoose.connection.readyState;
+
+  res.status(200).json({
+    status: 'OK',
+    mongo: mongoState === 1 ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString()
+  });
+});
+
 
 // Manejo de errores global
 app.use((err, req, res, next) => {

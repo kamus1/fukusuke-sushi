@@ -1,7 +1,4 @@
-// PaymentPage.tsx
 import styled from "styled-components";
-import webpayLogo from "../assets/images/logo-webpay-plus-3-2.png";
-import servipagLogo from "../assets/images/Logo_Servipag.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
@@ -31,7 +28,6 @@ const PaymentPage = () => {
   };
 
   const handlePayment = async () => {
-    // Validaciones básicas
     if (formData.email !== formData.emailConfirm) {
       alert('Los correos electrónicos no coinciden');
       return;
@@ -44,10 +40,7 @@ const PaymentPage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/fukusuke-sushi/login');
-        return;
-      }
+      const isGuest = !token;
 
       const orderItems = cart.map(item => ({
         product: item.id,
@@ -57,11 +50,11 @@ const PaymentPage = () => {
         subtotal: item.precio * item.cantidad
       }));
 
-      const response = await fetch('http://localhost:5001/api/orders', {
+      const orderRes = await fetch(`http://localhost:5001/api/orders${isGuest ? '/public' : ''}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(isGuest ? {} : { 'Authorization': `Bearer ${token}` })
         },
         body: JSON.stringify({
           items: orderItems,
@@ -75,19 +68,32 @@ const PaymentPage = () => {
         })
       });
 
-      if (!response.ok) {
+      if (!orderRes.ok) {
         throw new Error('Error al procesar el pedido');
       }
 
-      const order = await response.json();
+      const order = await orderRes.json();
       setOrderTicketId(order.ticketId);
       setPaymentSuccess(true);
       clearCart();
-      
-      // Esperar 3 segundos antes de redirigir
-      //setTimeout(() => {
-        //navigate(`/fukusuke-sushi/order-success/${order.ticketId}`);
-      //}, 3000);
+
+      // Redirige al pago con Flow
+      const flowRes = await fetch("http://localhost:5001/api/flow/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email, // en sandbox puedes usar "demo@flow.cl" si es necesario
+          amount: total
+        }),
+      });
+
+      const flowData = await flowRes.json();
+      if (flowData?.url) {
+        window.location.href = flowData.url;
+      } else {
+        console.error("Error en Flow:", flowData);
+        alert("Error al redirigir al portal de pago");
+      }
 
     } catch (error) {
       console.error('Error:', error);
@@ -95,46 +101,21 @@ const PaymentPage = () => {
     }
   };
 
+
   return (
     <Container>
       {paymentSuccess ? (
         <>
           <SuccessMessage>
-            Su pago ha sido realizado con éxito. Los detalles de la compra fueron enviados a su correo.<br></br>
+            Su pago ha sido iniciado correctamente. Será redirigido a Flow para completar el pago.<br />
             Su número de orden es: {orderTicketId}
           </SuccessMessage>
           <ButtonContainer>
-            <HomeButton onClick={() => navigate("/fukusuke-sushi")}>
-              Volver a la Página Principal
-            </HomeButton>
+            <HomeButton onClick={() => navigate("/fukusuke-sushi")}>Volver a la Página Principal</HomeButton>
           </ButtonContainer>
         </>
       ) : (
         <>
-          <Section>
-            <Legend>Forma de pago</Legend>
-            <PaymentOptions>
-              <Option>
-                <input type="radio" name="payment" id="webpay" defaultChecked />
-                <label htmlFor="webpay">
-                  Webpay (Tarjeta de Crédito o Redcompra)
-                  <Logos>
-                    <img src={webpayLogo} alt="Webpay" />
-                  </Logos>
-                </label>
-              </Option>
-              <Option>
-                <input type="radio" name="payment" id="servipag" />
-                <label htmlFor="servipag">
-                  Servipag Online
-                  <Logos>
-                    <img src={servipagLogo} alt="Servipag" />
-                  </Logos>
-                </label>
-              </Option>
-            </PaymentOptions>
-          </Section>
-
           <Section>
             <Legend>Información del pago</Legend>
             <InfoContainer>

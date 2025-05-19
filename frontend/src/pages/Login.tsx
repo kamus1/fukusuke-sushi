@@ -124,9 +124,9 @@ const Login = () => {
 
       // Redirigir según el rol
       if (data.user.role === 'admin') {
-        navigate('/fukusuke-sushi/admin');
+        navigate('/admin');
       } else {
-        navigate('/fukusuke-sushi/');
+        navigate('/');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en el inicio de sesión');
@@ -136,7 +136,7 @@ const Login = () => {
   };
 
   const handleRegisterClick = () => {
-    navigate('/fukusuke-sushi/register');
+    navigate('/register');
   };
 
   return (

@@ -43,7 +43,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (!user || user.role !== 'admin') {
-      navigate('/fukusuke-sushi/');
+      navigate('/');
     }
   }, [user, navigate]);
 

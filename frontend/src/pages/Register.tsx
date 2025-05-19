@@ -64,7 +64,7 @@ const Register = () => {
       // Registro exitoso
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/fukusuke-sushi/admin');
+      navigate('/admin');
       
     } catch (err) {
       console.error('Error en registro:', err);
