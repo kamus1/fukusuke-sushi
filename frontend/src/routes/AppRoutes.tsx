@@ -8,20 +8,21 @@ import Admin from "../pages/Admin";
 import Login from "../pages/Login";
 import Register from '../pages/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
+import PaymentSuccess from '../pages/PaymentSuccess'
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/fukusuke-sushi/" element={<Home />} />
-      <Route path="/fukusuke-sushi/about" element={<About />} />
-      <Route path="/fukusuke-sushi/contact" element={<Contact />} />
-      <Route path="/fukusuke-sushi/productos" element={<Products />} />
-      <Route path="/fukusuke-sushi/pago" element={<PaymentPage />} />
-      <Route path="/fukusuke-sushi/login" element={<Login />} />
-      <Route path="/fukusuke-sushi/register" element={<Register />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/productos" element={<Products />} />
+      <Route path="/pago" element={<PaymentPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/paymentsuccess" element={<PaymentSuccess />} />
       <Route
-        path="/fukusuke-sushi/admin"
+        path="/admin"
         element={
           <ProtectedRoute>
             <Admin />

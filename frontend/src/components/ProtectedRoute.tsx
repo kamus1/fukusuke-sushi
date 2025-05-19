@@ -10,11 +10,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const token = localStorage.getItem('token');
 
   if (!token || !user) {
-    return <Navigate to="/fukusuke-sushi/login/" />;
+    return <Navigate to="/login/" />;
   }
 
   if (user.role !== 'admin') {
-    return <Navigate to="/fukusuke-sushi/" />;
+    return <Navigate to="/" />;
   }
 
   return <>{children}</>;
