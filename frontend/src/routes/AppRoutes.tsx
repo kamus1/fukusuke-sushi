@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Register from '../pages/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
 import PaymentSuccess from '../pages/PaymentSuccess'
+import DespachosPendientes from "../pages/DespachosPendientes"; // asegúrate de crearlo
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/paymentsuccess" element={<PaymentSuccess />} />
+      <Route path="/despachos" element={<DespachosPendientes />} />
       <Route
         path="/admin"
         element={

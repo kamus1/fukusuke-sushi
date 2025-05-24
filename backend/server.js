@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const flowRoutes = require('./routes/flow');
+const despachoRoutes = require('./routes/despachos');
 
 const app = express();
 
@@ -25,7 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/flow', flowRoutes);
-
+app.use('/api/despachos', despachoRoutes);
 
 // Endpoint /api/health 
 app.get('/api/health', async (req, res) => {

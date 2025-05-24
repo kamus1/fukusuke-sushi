@@ -8,7 +8,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // js de bootstrap
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter basename="/fukusuke-sushi">
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </StrictMode>
