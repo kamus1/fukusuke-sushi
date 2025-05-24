@@ -12,6 +12,7 @@ import PaymentSuccess from '../pages/PaymentSuccess'
 import DespachosPendientes from "../pages/DespachosPendientes"; // asegúrate de crearlo
 import UserManagement from "../pages/UserManagement";
 import SalesStats from "../pages/SalesStats";
+import Promociones from "../pages/Promociones";
 
 const AppRoutes = () => {
   return (
@@ -46,6 +47,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <SalesStats />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/promociones"
+        element={
+          <ProtectedRoute>
+            <Promociones />
           </ProtectedRoute>
         }
       />

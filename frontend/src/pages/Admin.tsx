@@ -154,6 +154,7 @@ const Admin = () => {
           <NavLink to="/admin">Productos</NavLink>
           <NavLink to="/admin/users">Usuarios</NavLink>
           <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
+          <NavLink to="/admin/promociones">Promociones</NavLink>
         </AdminNav>
       </AdminHeader>
 
