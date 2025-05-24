@@ -1,68 +1,111 @@
 const express = require('express');
-const router = express.Router();
-const Order = require('../models/Order');
-const auth = require('../middleware/auth');
+const router  = express.Router();
+const Order   = require('../models/Order');
+const auth    = require('../middleware/auth');
+const DetalleVenta = require('../models/DetalleVenta');
 
-// Crear pedido
+/* helper: genera ticketId */
+const generateTicketId = () => {
+  const fecha  = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `FK-${fecha}-${random}`;
+};
+
+/* ---------- Crear pedido autenticado ---------- */
 router.post('/', auth, async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email } = req.body;
-    
+    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
+    const ticketId = generateTicketId();
+
     const order = new Order({
       user: req.user.id,
       email,
+      nombres,
+      rut,
       items,
       direccionEnvio,
       total,
-      estado: 'pagado'
+      ticketId,
+      estado: 'pendiente'
     });
 
     await order.save();
-    res.status(201).json(order);
-  } catch (error) {
-    console.error('Error:', error);
+
+    //crear los detalles de venta
+    const fechaVenta = new Date();
+    const detalles = items.map(item => ({
+      orderId: order._id,
+      productId: item.product,
+      nombre: item.nombre,
+      cantidad: item.cantidad,
+      precio: item.precio,
+      subtotal: item.subtotal,
+      fechaVenta
+    }));
+
+    await DetalleVenta.insertMany(detalles);
+
+    res.status(201).json({ order, ticketId });
+    
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: 'Error al crear el pedido' });
   }
 });
 
-router.get('/ticket/:ticketId', auth, async (req, res) => {
-  try {
-    const order = await Order.findOne({ ticketId: req.params.ticketId });
-    if (!order) {
-      return res.status(404).json({ msg: 'Pedido no encontrado' });
-    }
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ msg: 'Error al obtener el pedido' });
-  }
-});
-
-module.exports = router; 
-
-
-// para crear pedidos como invitado (sin autenticación)
+/* ---------- Crear pedido público ---------- */
 router.post('/public', async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email } = req.body;
-
-    // Validaciones mínimas
-    if (!email || !items || items.length === 0 || !total || !direccionEnvio) {
+    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
+    if (!email || !items?.length || !total || !direccionEnvio || !nombres) {
       return res.status(400).json({ msg: 'Faltan datos del pedido' });
     }
 
+    const ticketId = generateTicketId();
+
     const order = new Order({
-      user: null, // no está asociado a un usuario
+      user: null,
       email,
+      nombres,
+      rut,
       items,
       direccionEnvio,
       total,
-      estado: 'pendiente' // o 'pagado' si prefieres
+      ticketId,
+      estado: 'pendiente'
     });
 
     await order.save();
-    res.status(201).json(order);
-  } catch (error) {
-    console.error('Error al crear pedido público:', error);
-    res.status(500).json({ msg: 'Error al crear el pedido como invitado' });
+
+    //crear los detalles de venta
+    const fechaVenta = new Date();
+    const detalles = items.map(item => ({
+      orderId: order._id,
+      productId: item.product,
+      nombre: item.nombre,
+      cantidad: item.cantidad,
+      precio: item.precio,
+      subtotal: item.subtotal,
+      fechaVenta
+    }));
+
+    await DetalleVenta.insertMany(detalles);
+    res.status(201).json({ order, ticketId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Error al crear el pedido' });
   }
 });
+
+/* ---------- Obtener pedido por flowToken ---------- */
+router.get('/by-token/:token', async (req, res) => {
+  try {
+    const order = await Order.findOne({ flowToken: req.params.token });
+    if (!order) return res.status(404).json({ msg: 'Comprobante no encontrado' });
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Error al buscar el comprobante' });
+  }
+});
+module.exports = router;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { getProducts, updateProduct, createProduct, deleteProduct } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -146,13 +147,17 @@ const Admin = () => {
   };
 
   return (
-    <AdminContainer>
-      <HeaderContainer>
-        <Title>Panel de Administración</Title>
-        <CreateButton onClick={() => setShowCreateForm(true)}>
-          + Crear Nuevo Producto
-        </CreateButton>
-      </HeaderContainer>
+    <Container>
+      <AdminHeader>
+        <h1>Panel de Administración</h1>
+        <AdminNav>
+          <NavLink to="/admin">Productos</NavLink>
+          <NavLink to="/admin/users">Usuarios</NavLink>
+          <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
+          <NavLink to="/admin/promociones">Promociones</NavLink>
+        </AdminNav>
+      </AdminHeader>
+
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
 
@@ -371,89 +376,33 @@ const Admin = () => {
           </tbody>
         </ProductsTable>
       </TableWrapper>
-    </AdminContainer>
+    </Container>
   );
 };
-const AdminContainer = styled.div`
+
+const Container = styled.div`
   padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
 `;
 
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const AdminHeader = styled.div`
   margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 `;
 
-const Title = styled.h1`
-  color: #000000;
-  margin: 0;
-`;
-
-const FormContainer = styled.div`
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-  h2 {
-    margin-bottom: 1.5rem;
-    color: #333;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
-
-const FormGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-
-  .full-width {
-    grid-column: 1 / -1;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const FormField = styled.div`
+const AdminNav = styled.nav`
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
 
-  label {
-    font-weight: 500;
-    color: #333;
-  }
-
-  input, select, textarea {
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 100%;
-  }
-
-  textarea {
-    min-height: 80px;
-    resize: vertical;
+const NavLink = styled(Link)`
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  
+  &:hover {
+    background-color: #e0e0e0;
   }
 `;
 
@@ -605,6 +554,60 @@ const SuccessMessage = styled.div`
   border-radius: 8px;
   margin-bottom: 1rem;
   text-align: center;
+`;
+
+const FormContainer = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FormField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+
+  input, select, textarea {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
 `;
 
 export default Admin; 

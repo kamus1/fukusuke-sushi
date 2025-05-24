@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useCart } from "../context/CartContext";
 import { getProducts } from "../services/api";
-import promociones from "../data/promociones.json";
+import axios from 'axios';
 
 type Product = {
   _id: string;
@@ -17,25 +17,41 @@ type Product = {
   tags?: string[];
 };
 
+type Promocion = {
+  _id: string;
+  titulo: string;
+  imagen: string;
+  descripcion: string;
+  descuento: number;
+  fechaInicio: string;
+  fechaFin: string;
+  productos: Product[];
+};
+
 const Home: React.FC = () => {
   const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [promociones, setPromociones] = useState<Promocion[]>([]);
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadData = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data.slice(0, 5));
+        const [productsData, promocionesData] = await Promise.all([
+          getProducts(),
+          axios.get('http://localhost:5001/api/promociones')
+        ]);
+        setProducts(productsData.slice(0, 5));
+        setPromociones(promocionesData.data);
       } catch (error) {
-        console.error("Error al cargar productos:", error);
+        console.error("Error al cargar datos:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadProducts();
+    loadData();
   }, []);
 
   return (
@@ -46,7 +62,7 @@ const Home: React.FC = () => {
           <div className="carousel-inner rounded">
             {promociones.map((promo, index) => (
               <div
-                key={promo.id}
+                key={promo._id}
                 className={`carousel-item rounded ${index === 0 ? "active" : ""}`}
               >
                 <div className="d-flex justify-content-center align-items-center flex-wrap text-white p-4 rounded">
@@ -54,17 +70,24 @@ const Home: React.FC = () => {
                     <h6>Fukusuke Sushi</h6>
                     <h2>{promo.titulo}</h2>
                     <p>{promo.descripcion}</p>
-                    <a href={promo.link} className="btn btn-outline-light mt-2">
-                      Explorar Productos →
+                    <p className="descuento">¡{promo.descuento}% de descuento!</p>
+                    <a href="/productos" className="btn btn-outline-light mt-2">
+                      Ver Productos →
                     </a>
                   </div>
                   <div className="promo-img">
-                    <img
-                      src={promo.img_url}
-                      alt={promo.titulo}
-                      className="img-fluid"
-                      style={{ maxHeight: "220px" }}
-                    />
+                    {promo.imagen ? (
+                      <img
+                        src={promo.imagen}
+                        alt={promo.titulo}
+                        className="img-fluid"
+                        style={{ maxHeight: "220px" }}
+                      />
+                    ) : (
+                      <div className="placeholder-img">
+                        <span>Sin imagen</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -84,46 +107,66 @@ const Home: React.FC = () => {
           {loading ? (
             <p>Cargando productos...</p>
           ) : (
-            products.map((product) => (
-              <div key={product._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                <div
-                  className={`product-card ${product.disponible <= 0 ? "disabled" : ""}`}
-                >
-                  <img
-                    className="product-image"
-                    src={product.img_url}
-                    alt={product.nombre}
-                    onClick={() => setSelectedProduct(product)}
-                  />
-                  <div className="product-body">
-                    <p className="mb-1">{product.nombre}</p>
-                    <small>
-                      {product.disponible <= 0 ? (
-                        <span className="text-unavailable">No disponible</span>
+            products.map((product) => {
+              // Buscar si el producto tiene una promoción activa
+              const promocionActiva = promociones.find(promo => 
+                promo.productos.some(p => p._id === product._id)
+              );
+              
+              const precioOriginal = product.precio;
+              const precioConDescuento = promocionActiva 
+                ? precioOriginal * (1 - promocionActiva.descuento / 100)
+                : precioOriginal;
+
+              return (
+                <div key={product._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                  <div
+                    className={`product-card ${product.disponible <= 0 ? "disabled" : ""}`}
+                  >
+                    <img
+                      className="product-image"
+                      src={product.img_url}
+                      alt={product.nombre}
+                      onClick={() => setSelectedProduct(product)}
+                    />
+                    <div className="product-body">
+                      <p className="mb-1">{product.nombre}</p>
+                      <small>
+                        {product.disponible <= 0 ? (
+                          <span className="text-unavailable">No disponible</span>
+                        ) : (
+                          product.especialidad
+                        )}
+                      </small>
+                      {promocionActiva ? (
+                        <div className="precio-promocion">
+                          <span className="precio-original">${precioOriginal.toLocaleString("es-CL")}</span>
+                          <span className="precio-descuento">${precioConDescuento.toLocaleString("es-CL")}</span>
+                          <span className="descuento-badge">-{promocionActiva.descuento}%</span>
+                        </div>
                       ) : (
-                        product.especialidad
+                        <p className="product-price">${precioOriginal.toLocaleString("es-CL")}</p>
                       )}
-                    </small>
-                    <p className="product-price">${product.precio.toLocaleString("es-CL")}</p>
-                    <button
-                      className="buy-button"
-                      disabled={product.disponible <= 0}
-                      onClick={() =>
-                        addToCart({
-                          id: product._id,
-                          nombre: product.nombre,
-                          precio: product.precio,
-                          img_url: product.img_url,
-                          cantidad: 1,
-                        })
-                      }
-                    >
-                      {product.disponible > 0 ? "Añadir al carrito" : "Agotado"}
-                    </button>
+                      <button
+                        className="buy-button"
+                        disabled={product.disponible <= 0}
+                        onClick={() =>
+                          addToCart({
+                            id: product._id,
+                            nombre: product.nombre,
+                            precio: precioConDescuento,
+                            img_url: product.img_url,
+                            cantidad: 1,
+                          })
+                        }
+                      >
+                        {product.disponible > 0 ? "Añadir al carrito" : "Agotado"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
@@ -135,7 +178,25 @@ const Home: React.FC = () => {
             <ModalImage src={selectedProduct.img_url} alt={selectedProduct.nombre} />
             <ModalBody>
               <h3>{selectedProduct.nombre}</h3>
-              <p className="price">${selectedProduct.precio.toLocaleString("es-CL")}</p>
+              {promociones.find(promo => 
+                promo.productos.some(p => p._id === selectedProduct._id)
+              ) ? (
+                <div className="precio-promocion">
+                  <span className="precio-original">${selectedProduct.precio.toLocaleString("es-CL")}</span>
+                  <span className="precio-descuento">
+                    ${(selectedProduct.precio * (1 - promociones.find(promo => 
+                      promo.productos.some(p => p._id === selectedProduct._id)
+                    )!.descuento / 100)).toLocaleString("es-CL")}
+                  </span>
+                  <span className="descuento-badge">
+                    -{promociones.find(promo => 
+                      promo.productos.some(p => p._id === selectedProduct._id)
+                    )!.descuento}%
+                  </span>
+                </div>
+              ) : (
+                <p className="price">${selectedProduct.precio.toLocaleString("es-CL")}</p>
+              )}
               {selectedProduct.descripcion && <p>{selectedProduct.descripcion}</p>}
               {selectedProduct.cantidad_piezas && (
                 <p>
@@ -144,10 +205,17 @@ const Home: React.FC = () => {
               )}
               <AddToCartButton
                 onClick={() => {
+                  const promocionActiva = promociones.find(promo => 
+                    promo.productos.some(p => p._id === selectedProduct._id)
+                  );
+                  const precioFinal = promocionActiva 
+                    ? selectedProduct.precio * (1 - promocionActiva.descuento / 100)
+                    : selectedProduct.precio;
+
                   addToCart({
                     id: selectedProduct._id,
                     nombre: selectedProduct.nombre,
-                    precio: selectedProduct.precio,
+                    precio: precioFinal,
                     img_url: selectedProduct.img_url,
                     cantidad: 1,
                   });
@@ -200,6 +268,34 @@ const Container = styled.div`
     margin: 0;
   }
 
+  .precio-promocion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .precio-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .precio-descuento {
+    color: #e00000;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .descuento-badge {
+    background-color: #e00000;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
   .buy-button {
     background-color: #e00000;
     color: white;
@@ -249,6 +345,17 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+  }
+
+  .placeholder-img {
+    width: 240px;
+    height: 220px;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    border-radius: 8px;
   }
 
   @media (max-width: 768px) {
@@ -303,6 +410,7 @@ const ModalContent = styled.div`
     }
   }
 `;
+
 const CloseButton = styled.button`
   position: absolute;
   top: 1rem;
@@ -338,6 +446,34 @@ const ModalBody = styled.div`
   p {
     margin: 0;
     color: #555;
+  }
+
+  .precio-promocion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .precio-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .precio-descuento {
+    color: #e00000;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .descuento-badge {
+    background-color: #e00000;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
   }
 `;
 

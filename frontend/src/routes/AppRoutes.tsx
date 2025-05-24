@@ -9,6 +9,10 @@ import Login from "../pages/Login";
 import Register from '../pages/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
 import PaymentSuccess from '../pages/PaymentSuccess'
+import DespachosPendientes from "../pages/DespachosPendientes"; // asegúrate de crearlo
+import UserManagement from "../pages/UserManagement";
+import SalesStats from "../pages/SalesStats";
+import Promociones from "../pages/Promociones";
 
 const AppRoutes = () => {
   return (
@@ -21,11 +25,36 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/paymentsuccess" element={<PaymentSuccess />} />
+      <Route path="/despachos" element={<DespachosPendientes />} />
       <Route
         path="/admin"
         element={
           <ProtectedRoute>
             <Admin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <UserManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/ventas"
+        element={
+          <ProtectedRoute>
+            <SalesStats />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/promociones"
+        element={
+          <ProtectedRoute>
+            <Promociones />
           </ProtectedRoute>
         }
       />
