@@ -31,7 +31,16 @@ const orderSchema = new mongoose.Schema({
   flowToken: { type: String },                 // token que devuelve Flow
   estado:    {
     type: String,
-    enum: ['pendiente', 'pagado', 'en_proceso', 'enviado', 'entregado', 'cancelado'],
+  enum: [
+    'pendiente',
+    'pagado',
+    'en_proceso',
+    'enviado',
+    'entregado',
+    'cancelado',
+    'rechazado',                // ✅ nuevo valor
+    'pendiente_confirmacion'   // ✅ nuevo valor
+  ],
     default: 'pendiente'
   },
 

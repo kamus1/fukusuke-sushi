@@ -61,7 +61,7 @@ router.post('/public', async (req, res) => {
       return res.status(400).json({ msg: 'Faltan datos del pedido' });
     }
 
-    const ticketId = generateTicketId();
+    const ticketId = generateTicketId(); 
 
     const order = new Order({
       user: null,
