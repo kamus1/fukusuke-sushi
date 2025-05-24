@@ -16,6 +16,11 @@ const ordenDespachoSchema = new mongoose.Schema({
     default: null
   },
 
+  emailDespachador: {
+    type: String,
+    default: null
+  },
+
   fechaSalida: {
     type: Date,
     default: null

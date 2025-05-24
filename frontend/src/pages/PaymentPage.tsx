@@ -17,7 +17,7 @@ const PaymentPage = () => {
     emailConfirm: '',
     direccion: '',
     comuna: '',
-    region: ''
+    region: 'Región Metropolitana'
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +61,8 @@ const handlePayment = async () => {
         items: orderItems,
         total,
         email: formData.email,
+        nombres: formData.nombres,
+        rut: formData.rut,
         direccionEnvio: {
           calle: formData.direccion,
           comuna: formData.comuna,
@@ -191,6 +193,7 @@ const handlePayment = async () => {
                   value={formData.region}
                   onChange={handleInputChange}
                   required
+                  readOnly
                 />
               </InputGrid>
             </InfoContainer>

@@ -14,12 +14,14 @@ const generateTicketId = () => {
 /* ---------- Crear pedido autenticado ---------- */
 router.post('/', auth, async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email } = req.body;
+    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
     const ticketId = generateTicketId();
 
     const order = new Order({
       user: req.user.id,
       email,
+      nombres,
+      rut,
       items,
       direccionEnvio,
       total,
@@ -28,7 +30,6 @@ router.post('/', auth, async (req, res) => {
     });
 
     await order.save();
-
 
     //crear los detalles de venta
     const fechaVenta = new Date();
@@ -45,7 +46,6 @@ router.post('/', auth, async (req, res) => {
     await DetalleVenta.insertMany(detalles);
 
     res.status(201).json({ order, ticketId });
-
     
   } catch (err) {
     console.error(err);
@@ -56,8 +56,8 @@ router.post('/', auth, async (req, res) => {
 /* ---------- Crear pedido público ---------- */
 router.post('/public', async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email } = req.body;
-    if (!email || !items?.length || !total || !direccionEnvio) {
+    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
+    if (!email || !items?.length || !total || !direccionEnvio || !nombres) {
       return res.status(400).json({ msg: 'Faltan datos del pedido' });
     }
 
@@ -66,6 +66,8 @@ router.post('/public', async (req, res) => {
     const order = new Order({
       user: null,
       email,
+      nombres,
+      rut,
       items,
       direccionEnvio,
       total,

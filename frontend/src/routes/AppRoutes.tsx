@@ -10,6 +10,8 @@ import Register from '../pages/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
 import PaymentSuccess from '../pages/PaymentSuccess'
 import DespachosPendientes from "../pages/DespachosPendientes"; // asegúrate de crearlo
+import UserManagement from "../pages/UserManagement";
+import SalesStats from "../pages/SalesStats";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +30,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Admin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <UserManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/ventas"
+        element={
+          <ProtectedRoute>
+            <SalesStats />
           </ProtectedRoute>
         }
       />

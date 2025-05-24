@@ -9,6 +9,8 @@ const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const flowRoutes = require('./routes/flow');
 const despachoRoutes = require('./routes/despachos');
+const userRoutes = require('./routes/users');
+const ventasRoutes = require('./routes/ventas');
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/flow', flowRoutes);
 app.use('/api/despachos', despachoRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/ventas', ventasRoutes);
 
 // Endpoint /api/health 
 app.get('/api/health', async (req, res) => {
@@ -38,7 +42,6 @@ app.get('/api/health', async (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
 
 // Manejo de errores global
 app.use((err, req, res, next) => {

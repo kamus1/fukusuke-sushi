@@ -4,7 +4,8 @@ const crypto = require('crypto');
 const router = express.Router();
 const Order = require('../models/Order');
 const OrdenDespacho = require('../models/OrdenDespacho');
-
+const sendComprobante = require('../utils/sendComprobante');
+  
 // Carga variables desde .env
 const FLOW_API_KEY = process.env.FLOW_API_KEY;
 const FLOW_SECRET_KEY = process.env.FLOW_SECRET_KEY;
@@ -69,7 +70,7 @@ router.post('/create-order', async (req, res) => {
     res.status(500).json({ error: 'Error al conectar con Flow' });
   }
 });
-
+ 
 // ===============================================
 // POST /api/flow/confirmation
 // (puedes dejarlo o no usarlo si no quieres webhooks)
@@ -148,6 +149,17 @@ router.post('/return', express.urlencoded({ extended: true }), async (req, res) 
       }
     } else {
       console.log(`ℹ️ Orden de despacho ya existía para ticket ${order.ticketId}`);
+    }
+
+    //mailjet
+    try {
+      console.log('📧 Intentando enviar comprobante a:', order.email);
+      await sendComprobante(order);
+      console.log(`✅ Comprobante enviado exitosamente a ${order.email}`);
+    } catch (error) { 
+      console.error(`❌ Error al enviar comprobante:`, error.message);
+      // No redirigimos al usuario a una página de error, solo registramos el error
+      // ya que el pago fue exitoso y el comprobante se puede ver en la web
     }
 
     const target = `http://localhost:5173/paymentsuccess?token=${order.flowToken}`;

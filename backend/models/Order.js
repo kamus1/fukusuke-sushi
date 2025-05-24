@@ -13,6 +13,8 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   user:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   email:  { type: String, required: true },
+  nombres: { type: String, required: true },
+  rut:    { type: String },
 
   items:  [orderItemSchema],
   total:  { type: Number, required: true },
