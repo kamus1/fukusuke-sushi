@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useCart } from "../context/CartContext";
 import { getProducts } from "../services/api";
+import axios from 'axios';
 
 type Product = {
   _id: string;
@@ -16,18 +17,34 @@ type Product = {
   tags?: string[];
 };
 
+type Promocion = {
+  _id: string;
+  titulo: string;
+  imagen: string;
+  descripcion: string;
+  descuento: number;
+  fechaInicio: string;
+  fechaFin: string;
+  productos: Product[];
+};
+
 const Products: React.FC = () => {
   const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [promociones, setPromociones] = useState<Promocion[]>([]);
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadData = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data);
+        const [productsData, promocionesData] = await Promise.all([
+          getProducts(),
+          axios.get('http://localhost:5001/api/promociones')
+        ]);
+        setProducts(productsData);
+        setPromociones(promocionesData.data);
       } catch (err) {
         setError("Error al cargar productos");
         console.error(err);
@@ -35,7 +52,7 @@ const Products: React.FC = () => {
         setLoading(false);
       }
     };
-    loadProducts();
+    loadData();
   }, []);
 
   if (loading) return <div>Cargando productos...</div>;
@@ -44,10 +61,18 @@ const Products: React.FC = () => {
   return (
     <>
       <Container className="container mt-4">
-        <h3 className="title" >Nuestros Productos</h3>
+        <h3 className="title">Nuestros Productos</h3>
         <div className="row">
           {products.map((product: Product) => {
             const isAvailable = product.disponible > 0;
+            const promocionActiva = promociones.find(promo => 
+              promo.productos.some(p => p._id === product._id)
+            );
+            
+            const precioOriginal = product.precio;
+            const precioConDescuento = promocionActiva 
+              ? precioOriginal * (1 - promocionActiva.descuento / 100)
+              : precioOriginal;
 
             return (
               <div key={product._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
@@ -65,7 +90,15 @@ const Products: React.FC = () => {
                     ) : (
                       <small className="text-muted">{product.especialidad}</small>
                     )}
-                    <p className="product-price">${product.precio.toLocaleString("es-CL")}</p>
+                    {promocionActiva ? (
+                      <div className="precio-promocion">
+                        <span className="precio-original">${precioOriginal.toLocaleString("es-CL")}</span>
+                        <span className="precio-descuento">${precioConDescuento.toLocaleString("es-CL")}</span>
+                        <span className="descuento-badge">-{promocionActiva.descuento}%</span>
+                      </div>
+                    ) : (
+                      <p className="product-price">${precioOriginal.toLocaleString("es-CL")}</p>
+                    )}
                     <button
                       className="buy-button"
                       disabled={!isAvailable}
@@ -73,7 +106,7 @@ const Products: React.FC = () => {
                         addToCart({
                           id: product._id,
                           nombre: product.nombre,
-                          precio: product.precio,
+                          precio: precioConDescuento,
                           img_url: product.img_url,
                           cantidad: 1,
                         })
@@ -96,9 +129,25 @@ const Products: React.FC = () => {
             <ModalImage src={selectedProduct.img_url} alt={selectedProduct.nombre} />
             <ModalBody>
               <h3>{selectedProduct.nombre}</h3>
-              <div className="price-section">
+              {promociones.find(promo => 
+                promo.productos.some(p => p._id === selectedProduct._id)
+              ) ? (
+                <div className="precio-promocion">
+                  <span className="precio-original">${selectedProduct.precio.toLocaleString("es-CL")}</span>
+                  <span className="precio-descuento">
+                    ${(selectedProduct.precio * (1 - promociones.find(promo => 
+                      promo.productos.some(p => p._id === selectedProduct._id)
+                    )!.descuento / 100)).toLocaleString("es-CL")}
+                  </span>
+                  <span className="descuento-badge">
+                    -{promociones.find(promo => 
+                      promo.productos.some(p => p._id === selectedProduct._id)
+                    )!.descuento}%
+                  </span>
+                </div>
+              ) : (
                 <p className="price">${selectedProduct.precio.toLocaleString("es-CL")}</p>
-              </div>
+              )}
               {selectedProduct.descripcion && <p className="description">{selectedProduct.descripcion}</p>}
               <div className="details-grid">
                 {selectedProduct.cantidad_piezas && (
@@ -110,10 +159,17 @@ const Products: React.FC = () => {
               </div>
               <AddToCartButton
                 onClick={() => {
+                  const promocionActiva = promociones.find(promo => 
+                    promo.productos.some(p => p._id === selectedProduct._id)
+                  );
+                  const precioFinal = promocionActiva 
+                    ? selectedProduct.precio * (1 - promocionActiva.descuento / 100)
+                    : selectedProduct.precio;
+
                   addToCart({
                     id: selectedProduct._id,
                     nombre: selectedProduct.nombre,
-                    precio: selectedProduct.precio,
+                    precio: precioFinal,
                     img_url: selectedProduct.img_url,
                     cantidad: 1,
                   });
@@ -132,13 +188,14 @@ const Products: React.FC = () => {
 };
 
 export default Products;
-const Container = styled.div`
 
-  .title{
+const Container = styled.div`
+  .title {
     text-align: start;
     margin-bottom: 1.5rem;
     color: #333;
   }
+
   .product-card {
     background: white;
     border-radius: 12px;
@@ -170,6 +227,34 @@ const Container = styled.div`
     font-size: 1.2rem;
     font-weight: bold;
     margin: 0;
+  }
+
+  .precio-promocion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .precio-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .precio-descuento {
+    color: #e00000;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .descuento-badge {
+    background-color: #e00000;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
   }
 
   .buy-button {
@@ -233,7 +318,6 @@ const ModalOverlay = styled.div`
   }
 `;
 
-
 const ModalContent = styled.div`
   background: white;
   border-radius: 12px;
@@ -247,7 +331,6 @@ const ModalContent = styled.div`
   flex-direction: column;
   gap: 1rem;
 
-  //animacion
   opacity: 0;
   transform: scale(0.95);
   animation: fadeInUp 0.3s ease forwards;
@@ -295,6 +378,34 @@ const ModalBody = styled.div`
   p {
     margin: 0;
     color: #555;
+  }
+
+  .precio-promocion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .precio-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .precio-descuento {
+    color: #e00000;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .descuento-badge {
+    background-color: #e00000;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
   }
 `;
 

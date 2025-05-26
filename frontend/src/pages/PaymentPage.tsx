@@ -1,7 +1,4 @@
-// PaymentPage.tsx
 import styled from "styled-components";
-import webpayLogo from "../assets/images/logo-webpay-plus-3-2.png";
-import servipagLogo from "../assets/images/Logo_Servipag.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
@@ -20,7 +17,7 @@ const PaymentPage = () => {
     emailConfirm: '',
     direccion: '',
     comuna: '',
-    region: ''
+    region: 'Región Metropolitana'
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,111 +27,99 @@ const PaymentPage = () => {
     });
   };
 
-  const handlePayment = async () => {
-    // Validaciones básicas
-    if (formData.email !== formData.emailConfirm) {
-      alert('Los correos electrónicos no coinciden');
-      return;
+const handlePayment = async () => {
+  if (formData.email !== formData.emailConfirm) {
+    alert('Los correos electrónicos no coinciden');
+    return;
+  }
+
+  if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region) {
+    alert('Por favor complete todos los campos obligatorios');
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem('token');
+    const isGuest = !token;
+
+    const orderItems = cart.map(item => ({
+      product: item.id,
+      nombre: item.nombre,
+      cantidad: item.cantidad,
+      precio: item.precio,
+      subtotal: item.precio * item.cantidad
+    }));
+
+    // 1. Crear la orden primero (pendiente), y obtener ticketId
+    const orderRes = await fetch(`http://localhost:5001/api/orders${isGuest ? '/public' : ''}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(isGuest ? {} : { 'Authorization': `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        items: orderItems,
+        total,
+        email: formData.email,
+        nombres: formData.nombres,
+        rut: formData.rut,
+        direccionEnvio: {
+          calle: formData.direccion,
+          comuna: formData.comuna,
+          region: formData.region
+        }
+      })
+    });
+
+    if (!orderRes.ok) {
+      throw new Error('Error al procesar el pedido');
     }
 
-    if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region) {
-      alert('Por favor complete todos los campos obligatorios');
-      return;
+    const { ticketId } = await orderRes.json(); // 👈 Obtener ticketId generado por backend
+    setOrderTicketId(ticketId);
+    setPaymentSuccess(true);
+    clearCart();
+
+    // 2. Llamar a Flow con el mismo ticketId como commerceOrder
+    const flowRes = await fetch("http://localhost:5001/api/flow/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        amount: total,
+        ticketId // 👈 Se pasa aquí como commerceOrder
+      }),
+    });
+
+    const flowData = await flowRes.json();
+    if (flowData?.url) {
+      window.location.href = flowData.url;
+    } else {
+      console.error("Error en Flow:", flowData);
+      alert("Error al redirigir al portal de pago");
     }
 
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/fukusuke-sushi/login');
-        return;
-      }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al procesar el pedido');
+  }
+};
 
-      const orderItems = cart.map(item => ({
-        product: item.id,
-        nombre: item.nombre,
-        cantidad: item.cantidad,
-        precio: item.precio,
-        subtotal: item.precio * item.cantidad
-      }));
-
-      const response = await fetch('http://localhost:5001/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          items: orderItems,
-          total,
-          email: formData.email,
-          direccionEnvio: {
-            calle: formData.direccion,
-            comuna: formData.comuna,
-            region: formData.region
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al procesar el pedido');
-      }
-
-      const order = await response.json();
-      setOrderTicketId(order.ticketId);
-      setPaymentSuccess(true);
-      clearCart();
-      
-      // Esperar 3 segundos antes de redirigir
-      //setTimeout(() => {
-        //navigate(`/fukusuke-sushi/order-success/${order.ticketId}`);
-      //}, 3000);
-
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error al procesar el pedido');
-    }
-  };
 
   return (
     <Container>
       {paymentSuccess ? (
         <>
           <SuccessMessage>
-            Su pago ha sido realizado con éxito. Los detalles de la compra fueron enviados a su correo.<br></br>
+            Su pago ha sido iniciado correctamente. Será redirigido a Flow para completar el pago.<br />
             Su número de orden es: {orderTicketId}
           </SuccessMessage>
           <ButtonContainer>
-            <HomeButton onClick={() => navigate("/fukusuke-sushi")}>
-              Volver a la Página Principal
-            </HomeButton>
+            <HomeButton onClick={() => navigate("/")}>Volver a la Página Principal</HomeButton>
           </ButtonContainer>
         </>
       ) : (
         <>
-          <Section>
-            <Legend>Forma de pago</Legend>
-            <PaymentOptions>
-              <Option>
-                <input type="radio" name="payment" id="webpay" defaultChecked />
-                <label htmlFor="webpay">
-                  Webpay (Tarjeta de Crédito o Redcompra)
-                  <Logos>
-                    <img src={webpayLogo} alt="Webpay" />
-                  </Logos>
-                </label>
-              </Option>
-              <Option>
-                <input type="radio" name="payment" id="servipag" />
-                <label htmlFor="servipag">
-                  Servipag Online
-                  <Logos>
-                    <img src={servipagLogo} alt="Servipag" />
-                  </Logos>
-                </label>
-              </Option>
-            </PaymentOptions>
-          </Section>
-
           <Section>
             <Legend>Información del pago</Legend>
             <InfoContainer>
@@ -208,6 +193,7 @@ const PaymentPage = () => {
                   value={formData.region}
                   onChange={handleInputChange}
                   required
+                  readOnly
                 />
               </InputGrid>
             </InfoContainer>
