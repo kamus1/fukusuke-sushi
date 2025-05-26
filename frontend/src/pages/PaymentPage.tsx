@@ -17,7 +17,7 @@ const PaymentPage = () => {
     emailConfirm: '',
     direccion: '',
     comuna: '',
-    region: 'Región Metropolitana'
+    region: 'Región Metropolitana' // por default
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,83 +27,83 @@ const PaymentPage = () => {
     });
   };
 
-const handlePayment = async () => {
-  if (formData.email !== formData.emailConfirm) {
-    alert('Los correos electrónicos no coinciden');
-    return;
-  }
-
-  if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region) {
-    alert('Por favor complete todos los campos obligatorios');
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem('token');
-    const isGuest = !token;
-
-    const orderItems = cart.map(item => ({
-      product: item.id,
-      nombre: item.nombre,
-      cantidad: item.cantidad,
-      precio: item.precio,
-      subtotal: item.precio * item.cantidad
-    }));
-
-    // 1. Crear la orden primero (pendiente), y obtener ticketId
-    const orderRes = await fetch(`http://localhost:5001/api/orders${isGuest ? '/public' : ''}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(isGuest ? {} : { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify({
-        items: orderItems,
-        total,
-        email: formData.email,
-        nombres: formData.nombres,
-        rut: formData.rut,
-        direccionEnvio: {
-          calle: formData.direccion,
-          comuna: formData.comuna,
-          region: formData.region
-        }
-      })
-    });
-
-    if (!orderRes.ok) {
-      throw new Error('Error al procesar el pedido');
+  const handlePayment = async () => {
+    if (formData.email !== formData.emailConfirm) {
+      alert('Los correos electrónicos no coinciden');
+      return;
     }
 
-    const { ticketId } = await orderRes.json(); // 👈 Obtener ticketId generado por backend
-    setOrderTicketId(ticketId);
-    setPaymentSuccess(true);
-    clearCart();
-
-    // 2. Llamar a Flow con el mismo ticketId como commerceOrder
-    const flowRes = await fetch("http://localhost:5001/api/flow/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.email,
-        amount: total,
-        ticketId // 👈 Se pasa aquí como commerceOrder
-      }),
-    });
-
-    const flowData = await flowRes.json();
-    if (flowData?.url) {
-      window.location.href = flowData.url;
-    } else {
-      console.error("Error en Flow:", flowData);
-      alert("Error al redirigir al portal de pago");
+    if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
     }
 
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error al procesar el pedido');
-  }
-};
+    try {
+      const token = localStorage.getItem('token');
+      const isGuest = !token;
+
+      const orderItems = cart.map(item => ({
+        product: item.id,
+        nombre: item.nombre,
+        cantidad: item.cantidad,
+        precio: item.precio,
+        subtotal: item.precio * item.cantidad
+      }));
+
+      // 1. Crear la orden primero (pendiente), y obtener ticketId
+      const orderRes = await fetch(`http://localhost:5001/api/orders${isGuest ? '/public' : ''}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(isGuest ? {} : { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({
+          items: orderItems,
+          total,
+          email: formData.email,
+          nombres: formData.nombres,
+          rut: formData.rut,
+          direccionEnvio: {
+            calle: formData.direccion,
+            comuna: formData.comuna,
+            region: formData.region
+          }
+        })
+      });
+
+      if (!orderRes.ok) {
+        throw new Error('Error al procesar el pedido');
+      }
+
+      const { ticketId } = await orderRes.json(); // Obtener ticketId generado por backend
+      setOrderTicketId(ticketId);
+      setPaymentSuccess(true);
+      clearCart();
+
+      // 2. Llamar a Flow con el mismo ticketId como commerceOrder
+      const flowRes = await fetch("http://localhost:5001/api/flow/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          amount: total,
+          ticketId // Se pasa aquí como commerceOrder
+        }),
+      });
+
+      const flowData = await flowRes.json();
+      if (flowData?.url) {
+        window.location.href = flowData.url;
+      } else {
+        console.error("Error en Flow:", flowData);
+        alert("Error al redirigir al portal de pago");
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al procesar el pedido');
+    }
+  };
 
 
   return (

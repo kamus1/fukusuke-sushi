@@ -38,8 +38,8 @@ const orderSchema = new mongoose.Schema({
     'enviado',
     'entregado',
     'cancelado',
-    'rechazado',                // ✅ nuevo valor
-    'pendiente_confirmacion'   // ✅ nuevo valor
+    'rechazado',               
+    'pendiente_confirmacion'
   ],
     default: 'pendiente'
   },
