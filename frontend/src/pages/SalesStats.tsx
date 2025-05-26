@@ -118,33 +118,6 @@ const SalesStats = () => {
   </ChartContainer>
 </Section>
 
-<Section>
-  <SectionTitle>Distribución de Ventas por Producto</SectionTitle>
-  <ChartContainer>
-    <ResponsiveContainer width="100%" height={400}>
-      <PieChart>
-        <Pie
-          data={productosMasVendidos}
-          dataKey="total"
-          nameKey="nombre"
-          cx="50%"
-          cy="50%"
-          outerRadius={150}
-          fill="#8884d8"
-          label
-        >
-          {productosMasVendidos.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={`hsl(${index * 45}, 70%, 50%)`} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
-  </ChartContainer>
-</Section>
-
-
       <Section>
         <SectionTitle>Productos Más Vendidos</SectionTitle>
         <ProductosGrid>
