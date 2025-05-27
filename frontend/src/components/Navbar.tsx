@@ -76,6 +76,18 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
+            {(user?.role === 'admin' || user?.role === 'despachador') && (
+              <li className="nav-item">
+                <NavLink
+                  className={({ isActive }) =>
+                    `nav-link${isActive ? " active" : ""}`
+                  }
+                  to="/despachos"
+                >
+                  Despachos
+                </NavLink>
+              </li>
+            )}
             <li className="nav-item">
               {user ? (
                 <LogoutButton onClick={handleLogout} title="Cerrar sesión">

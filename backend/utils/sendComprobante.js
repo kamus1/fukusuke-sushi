@@ -25,6 +25,7 @@ const sendComprobante = async (order) => {
         <p><strong>Fecha:</strong> ${new Date(order.fechaPedido).toLocaleString()}</p>
         <p><strong>Nombre:</strong> ${order.nombres || 'Cliente'}</p>
         <p><strong>Email:</strong> ${order.email}</p>
+        <p><strong>Teléfono:</strong> ${order.telefono}</p>
       </div>
       <h3 style="color: #444;">Productos:</h3>
       <ul style="list-style: none; padding: 0;">${productosHTML}</ul>

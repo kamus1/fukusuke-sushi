@@ -15,6 +15,7 @@ const orderSchema = new mongoose.Schema({
   email:  { type: String, required: true },
   nombres: { type: String, required: true },
   rut:    { type: String },
+  telefono: { type: String, required: true },
 
   items:  [orderItemSchema],
   total:  { type: Number, required: true },
@@ -35,8 +36,6 @@ const orderSchema = new mongoose.Schema({
     'pendiente',
     'pagado',
     'en_proceso',
-    'enviado',
-    'entregado',
     'cancelado',
     'rechazado',               
     'pendiente_confirmacion'

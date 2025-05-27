@@ -120,6 +120,7 @@ router.post('/confirmation', express.urlencoded({ extended: true }), async (req,
           if (order.direccionEnvio && order.direccionEnvio.calle) {
             await OrdenDespacho.create({
               direccion: order.direccionEnvio,
+              telefono: order.telefono,
               orderId: order._id, //orden de despacho relacionada con su order (comprobante)
               estado: 'Pendiente'
             });

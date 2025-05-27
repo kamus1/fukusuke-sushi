@@ -5,13 +5,13 @@ export default defineConfig({
   base: '/',
   plugins: [react()],
   server: {
-    allowedHosts: ['bc95-186-79-197-233.ngrok-free.app'],
+    allowedHosts: ['c533-186-79-197-233.ngrok-free.app'],
     fs: {
       strict: false
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:5001',
+        target: process.env.VITE_BACKEND_URL || 'http://localhost:5001',
         changeOrigin: true,
         secure: false
       }

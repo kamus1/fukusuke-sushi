@@ -13,6 +13,7 @@ import DespachosPendientes from "../pages/DespachosPendientes"; // asegúrate de
 import UserManagement from "../pages/UserManagement";
 import SalesStats from "../pages/SalesStats";
 import Promociones from "../pages/Promociones";
+import PaymentError from "../pages/PaymentError"
 
 const AppRoutes = () => {
   return (
@@ -26,6 +27,7 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/paymentsuccess" element={<PaymentSuccess />} />
       <Route path="/despachos" element={<DespachosPendientes />} />
+      <Route path="/paymenterror" element={<PaymentError />} />
       <Route
         path="/admin"
         element={

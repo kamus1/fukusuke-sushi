@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { API_URL } from '../config';
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -17,13 +18,24 @@ const PaymentPage = () => {
     emailConfirm: '',
     direccion: '',
     comuna: '',
-    region: 'Región Metropolitana' // por default
+    region: 'Región Metropolitana', // por default
+    telefono: '',
+    codigoPais: '+56' // default Chile
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow numbers
+    const value = e.target.value.replace(/[^\d]/g, '');
+    setFormData({
+      ...formData,
+      telefono: value
     });
   };
 
@@ -33,7 +45,7 @@ const PaymentPage = () => {
       return;
     }
 
-    if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region) {
+    if (!formData.nombres || !formData.email || !formData.direccion || !formData.comuna || !formData.region || !formData.telefono) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
@@ -51,7 +63,7 @@ const PaymentPage = () => {
       }));
 
       // 1. Crear la orden primero (pendiente), y obtener ticketId
-      const orderRes = await fetch(`http://localhost:5001/api/orders${isGuest ? '/public' : ''}`, {
+      const orderRes = await fetch(`${API_URL}/api/orders${isGuest ? '/public' : ''}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,6 +75,7 @@ const PaymentPage = () => {
           email: formData.email,
           nombres: formData.nombres,
           rut: formData.rut,
+          telefono: `${formData.codigoPais}${formData.telefono}`,
           direccionEnvio: {
             calle: formData.direccion,
             comuna: formData.comuna,
@@ -75,19 +88,19 @@ const PaymentPage = () => {
         throw new Error('Error al procesar el pedido');
       }
 
-      const { ticketId } = await orderRes.json(); // Obtener ticketId generado por backend
+      const { ticketId } = await orderRes.json();
       setOrderTicketId(ticketId);
       setPaymentSuccess(true);
       clearCart();
 
       // 2. Llamar a Flow con el mismo ticketId como commerceOrder
-      const flowRes = await fetch("http://localhost:5001/api/flow/create-order", {
+      const flowRes = await fetch(`${API_URL}/api/flow/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
-          amount: total,
-          ticketId // Se pasa aquí como commerceOrder
+          amount: Math.round(total),
+          ticketId
         }),
       });
 
@@ -104,7 +117,6 @@ const PaymentPage = () => {
       alert('Error al procesar el pedido');
     }
   };
-
 
   return (
     <Container>
@@ -170,6 +182,27 @@ const PaymentPage = () => {
                   onChange={handleInputChange}
                   required
                 />
+                <PhoneInputContainer>
+                  <select
+                    name="codigoPais"
+                    value={formData.codigoPais}
+                    onChange={handleInputChange}
+                  >
+                    <option value="+56">+56</option>
+                    <option value="+54">+54</option>
+                    <option value="+51">+51</option>
+                    <option value="+55">+55</option>
+                    <option value="+57">+57</option>
+                  </select>
+                  <input
+                    type="tel"
+                    name="telefono"
+                    placeholder="Teléfono"
+                    value={formData.telefono}
+                    onChange={handlePhoneChange}
+                    required
+                  />
+                </PhoneInputContainer>
                 <input
                   type="text"
                   name="direccion"
@@ -194,6 +227,7 @@ const PaymentPage = () => {
                   onChange={handleInputChange}
                   required
                   readOnly
+                  className="default-value"
                 />
               </InputGrid>
             </InfoContainer>
@@ -312,6 +346,30 @@ const InputGrid = styled.div`
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+
+    &.default-value {
+      background-color: #f5f5f5;
+      color: #666;
+      cursor: not-allowed;
+      border-color: #ddd;
+    }
+  }
+`;
+
+const PhoneInputContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  grid-column: 1 / -1;
+
+  select {
+    width: 100px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  input {
+    flex: 1;
   }
 `;
 
@@ -341,7 +399,7 @@ const PayButton = styled.button`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 `;
 
 const HomeButton = styled.button`
