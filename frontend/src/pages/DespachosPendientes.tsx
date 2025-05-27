@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 interface Direccion {
   calle: string;
@@ -26,6 +27,7 @@ interface Orden {
     email: string;
     nombres: string;
     rut: string;
+    telefono: string;
     fechaPedido: string;
   };
 }
@@ -39,13 +41,13 @@ const DespachosPendientes = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null); // ✅ agregado
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('/api/users/me', {
+        const res = await axios.get(`${API_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserEmail(res.data.email);
@@ -60,7 +62,7 @@ const DespachosPendientes = () => {
   const fetchOrdenes = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`/api/despachos/pendientes?page=${currentPage}&limit=${ITEMS_PER_PAGE}`, {
+      const res = await axios.get(`${API_URL}/api/despachos/pendientes?page=${currentPage}&limit=${ITEMS_PER_PAGE}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.ordenes && Array.isArray(res.data.ordenes)) {
@@ -87,7 +89,7 @@ const DespachosPendientes = () => {
   const tomarOrden = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`/api/despachos/tomar/${id}`, {}, {
+      const res = await axios.post(`${API_URL}/api/despachos/tomar/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMensaje(`Orden tomada: ${res.data.orden.orderId.ticketId}`);
@@ -101,7 +103,7 @@ const DespachosPendientes = () => {
   const completarOrden = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`/api/despachos/completar/${id}`, {}, {
+      const res = await axios.post(`${API_URL}/api/despachos/completar/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMensaje(`Orden completada: ${res.data.orden.orderId.ticketId}`);
@@ -175,6 +177,7 @@ const DespachosPendientes = () => {
                 <p><strong>Ticket:</strong> {orden.orderId.ticketId}</p>
                 <p><strong>Cliente:</strong> {orden.orderId.nombres}</p>
                 <p><strong>RUT:</strong> {orden.orderId.rut || 'No especificado'}</p>
+                <p><strong>Teléfono:</strong> {orden.orderId.telefono || 'No especificado'}</p>
                 <p><strong>Email:</strong> {orden.orderId.email}</p>
                 <p><strong>Dirección:</strong> {`${orden.direccion.calle} ${orden.direccion.comuna}, ${orden.direccion.region}`}</p>
                 <p><strong>Total:</strong> ${orden.orderId.total}</p>

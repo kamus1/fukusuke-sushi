@@ -14,7 +14,7 @@ const generateTicketId = () => {
 /* ---------- Crear pedido autenticado ---------- */
 router.post('/', auth, async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
+    const { items, direccionEnvio, total, email, nombres, rut, telefono } = req.body;
     const ticketId = generateTicketId();
 
     const order = new Order({
@@ -22,6 +22,7 @@ router.post('/', auth, async (req, res) => {
       email,
       nombres,
       rut,
+      telefono,
       items,
       direccionEnvio,
       total,
@@ -56,8 +57,8 @@ router.post('/', auth, async (req, res) => {
 /* ---------- Crear pedido público ---------- */
 router.post('/public', async (req, res) => {
   try {
-    const { items, direccionEnvio, total, email, nombres, rut } = req.body;
-    if (!email || !items?.length || !total || !direccionEnvio || !nombres) {
+    const { items, direccionEnvio, total, email, nombres, rut, telefono } = req.body;
+    if (!email || !items?.length || !total || !direccionEnvio || !nombres || !telefono) {
       return res.status(400).json({ msg: 'Faltan datos del pedido' });
     }
 
@@ -68,6 +69,7 @@ router.post('/public', async (req, res) => {
       email,
       nombres,
       rut,
+      telefono,
       items,
       direccionEnvio,
       total,

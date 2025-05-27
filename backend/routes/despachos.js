@@ -72,7 +72,7 @@ router.get('/', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const ordenes = await OrdenDespacho.find()
       .populate('encargadoDespacho', 'nombre email role')
-      .populate('orderId', 'email total ticketId nombres rut fechaPedido');
+      .populate('orderId', 'email total ticketId nombres rut telefono fechaPedido');
     res.json(ordenes);
   } catch (err) {
     console.error(err);
@@ -92,7 +92,7 @@ router.get('/pendientes', auth, checkRoles('admin', 'despachador'), async (req, 
 
     // Obtener las órdenes con paginación
     const ordenes = await OrdenDespacho.find()
-      .populate('orderId', 'email total ticketId nombres rut fechaPedido')
+      .populate('orderId', 'email total ticketId nombres rut telefono fechaPedido')
       .populate('encargadoDespacho', 'nombre email')
       .sort({ 'orderId.fechaPedido': -1 }) // Ordenar por fecha más reciente
       .skip(skip)
@@ -117,7 +117,7 @@ router.get('/mis-ordenes', auth, checkRoles('admin', 'despachador'), async (req,
     if (!despachador) return res.status(404).json({ msg: 'Despachador no encontrado' });
 
     const misOrdenes = await OrdenDespacho.find({ emailDespachador: despachador.email })
-      .populate('orderId', 'ticketId email total nombres rut fechaPedido');
+      .populate('orderId', 'ticketId email total nombres rut telefono fechaPedido');
     res.json(misOrdenes);
   } catch (err) {
     console.error(err);

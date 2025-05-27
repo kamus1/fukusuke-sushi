@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+
 import { 
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, AreaChart, Area, ResponsiveContainer 
 } from 'recharts';
+import { API_URL } from '../config';
 
 interface DetalleVenta {
   _id: string;
@@ -34,7 +36,7 @@ const SalesStats = () => {
 
   const fetchVentas = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/ventas');
+      const response = await axios.get(`${API_URL}/api/ventas`);
       setVentas(response.data);
       
       // Calcular total de ventas

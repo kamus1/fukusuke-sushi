@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { API_URL } from '../config';
 
 interface User {
   _id: string;
@@ -22,11 +23,11 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/users');
+      const response = await axios.get(`${API_URL}/api/users`);
       setUsers(response.data);
       
       // Obtener el usuario actual
-      const userResponse = await axios.get('http://localhost:5001/api/users/me');
+      const userResponse = await axios.get(`${API_URL}/api/users/me`);
       setCurrentUser(userResponse.data);
     } catch (err) {
       setError('Error al cargar usuarios');
@@ -47,7 +48,7 @@ const UserManagement = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:5001/api/users/${userId}/role`, { role: newRole });
+      await axios.patch(`${API_URL}/api/users/${userId}/role`, { role: newRole });
       setSuccess('Rol actualizado exitosamente');
       fetchUsers();
       setTimeout(() => setSuccess(''), 3000);

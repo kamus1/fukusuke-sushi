@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { API_URL } from '../config';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ const PaymentSuccess = () => {
       }
 
       try {
-        const res = await fetch(`http://localhost:5001/api/orders/by-token/${flowToken}`);
+        const res = await fetch(`${API_URL}/api/orders/by-token/${flowToken}`);
         if (!res.ok) throw new Error("Error al cargar el comprobante.");
 
         const data = await res.json();
@@ -49,6 +50,7 @@ const PaymentSuccess = () => {
         <ReceiptItem><strong>Ticket ID:</strong> {order.ticketId}</ReceiptItem>
         <ReceiptItem><strong>Fecha:</strong> {new Date(order.fechaPedido).toLocaleString()}</ReceiptItem>
         <ReceiptItem><strong>Email:</strong> {order.email}</ReceiptItem>
+        <ReceiptItem><strong>Teléfono:</strong> {order.telefono}</ReceiptItem>
         <ReceiptItem><strong>Método de pago:</strong> {order.metodoPago || 'Flow.cl'}</ReceiptItem>
         <ReceiptItem><strong>Estado:</strong> {order.estado}</ReceiptItem>
 
