@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useCart } from "../context/CartContext";
 import { getProducts } from "../services/api";
 import axios from 'axios';
+import { API_URL } from '../config';
 
 type Product = {
   _id: string;
@@ -41,7 +42,7 @@ const Products: React.FC = () => {
       try {
         const [productsData, promocionesData] = await Promise.all([
           getProducts(),
-          axios.get('http://localhost:5001/api/promociones')
+          axios.get(`${API_URL}/api/promociones`)
         ]);
         setProducts(productsData);
         setPromociones(promocionesData.data);

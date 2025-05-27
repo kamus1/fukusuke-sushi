@@ -1,8 +1,10 @@
-const API_URL = 'http://localhost:5001/api';
+import { API_URL } from '../config';
+
+const API_BASE_URL = `${API_URL}/api`;
 
 export const getProducts = async () => {
   try {
-    const response = await fetch(`${API_URL}/products`);
+    const response = await fetch(`${API_BASE_URL}/products`);
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error al cargar los productos');
@@ -16,7 +18,7 @@ export const getProducts = async () => {
 
 export const updateProduct = async (id: number, productData: any) => {
   try {
-    const response = await fetch(`${API_URL}/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +42,7 @@ export const updateProduct = async (id: number, productData: any) => {
 
 export const createProduct = async (productData: any) => {
   try {
-    const response = await fetch(`${API_URL}/products`, {
+    const response = await fetch(`${API_BASE_URL}/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +64,7 @@ export const createProduct = async (productData: any) => {
 
 export const deleteProduct = async (id: number) => {
   try {
-    const response = await fetch(`${API_URL}/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
       method: 'DELETE',
     });
 

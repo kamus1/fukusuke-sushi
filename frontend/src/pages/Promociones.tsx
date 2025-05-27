@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 interface Product {
   _id: string;
@@ -33,7 +34,7 @@ const Promociones = () => {
     titulo: '',
     imagen: '',
     descripcion: '',
-    descuento: 0,
+    descuento: '',
     activa: true,
     fechaInicio: '',
     fechaFin: '',
@@ -50,7 +51,7 @@ const Promociones = () => {
 
   const fetchPromociones = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/promociones/admin');
+      const response = await axios.get(`${API_URL}/api/promociones/admin`);
       setPromociones(response.data);
       setLoading(false);
     } catch (err) {
@@ -62,7 +63,7 @@ const Promociones = () => {
 
   const fetchProductos = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/products');
+      const response = await axios.get(`${API_URL}/api/products`);
       setProductos(response.data);
     } catch (err) {
       console.error('Error al cargar productos:', err);
@@ -72,8 +73,9 @@ const Promociones = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5001/api/promociones', {
+      await axios.post(`${API_URL}/api/promociones`, {
         ...newPromocion,
+        descuento: Number(newPromocion.descuento),
         productos: selectedProducts
       });
       setShowForm(false);
@@ -81,7 +83,7 @@ const Promociones = () => {
         titulo: '',
         imagen: '',
         descripcion: '',
-        descuento: 0,
+        descuento: '',
         activa: true,
         fechaInicio: '',
         fechaFin: '',
@@ -97,7 +99,7 @@ const Promociones = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta promoción?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/promociones/${id}`);
+        await axios.delete(`${API_URL}/api/promociones/${id}`);
         fetchPromociones();
       } catch (err) {
         setError('Error al eliminar la promoción');
@@ -108,7 +110,7 @@ const Promociones = () => {
 
   const handleToggleActive = async (promocion: Promocion) => {
     try {
-      await axios.put(`http://localhost:5001/api/promociones/${promocion._id}`, {
+      await axios.put(`${API_URL}/api/promociones/${promocion._id}`, {
         ...promocion,
         activa: !promocion.activa
       });
@@ -166,7 +168,7 @@ const Promociones = () => {
                 min="0"
                 max="100"
                 value={newPromocion.descuento}
-                onChange={(e) => setNewPromocion({...newPromocion, descuento: Number(e.target.value)})}
+                onChange={(e) => setNewPromocion({...newPromocion, descuento: e.target.value})}
                 required
               />
             </FormField>

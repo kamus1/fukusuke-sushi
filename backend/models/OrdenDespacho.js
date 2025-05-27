@@ -10,6 +10,11 @@ const ordenDespachoSchema = new mongoose.Schema({
     region: String
   },
 
+  telefono: {
+    type: String,
+    required: true
+  },
+
   encargadoDespacho: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Reutilizamos el modelo User
