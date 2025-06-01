@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+
+import { 
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  PieChart, Pie, Cell, AreaChart, Area, ResponsiveContainer 
+} from 'recharts';
 import { API_URL } from '../config';
 
 interface DetalleVenta {
@@ -58,6 +63,20 @@ const SalesStats = () => {
     }
   };
 
+  // Agregar esta función para procesar datos
+  const procesarDatosGrafico = (ventas: DetalleVenta[]) => {
+    const ventasPorDia = ventas.reduce((acc: {[key: string]: number}, venta) => {
+      const fecha = new Date(venta.fechaVenta).toLocaleDateString();
+      acc[fecha] = (acc[fecha] || 0) + venta.subtotal;
+      return acc;
+    }, {});
+
+    return Object.entries(ventasPorDia).map(([fecha, total]) => ({
+      fecha,
+      total
+    }));
+  };
+
   if (loading) return <LoadingMessage>Cargando estadísticas...</LoadingMessage>;
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
@@ -77,33 +96,82 @@ const SalesStats = () => {
         </StatCard>
       </StatsGrid>
 
+
+
+<Section>
+  <SectionTitle>Tendencia de Ventas por Día</SectionTitle>
+  <ChartContainer>
+    <ResponsiveContainer width="100%" height={400}>
+      <AreaChart data={procesarDatosGrafico(ventas)}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="fecha" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Area 
+          type="monotone" 
+          dataKey="total" 
+          stroke="#e00000" 
+          fill="#e00000" 
+          fillOpacity={0.3} 
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  </ChartContainer>
+</Section>
+
       <Section>
         <SectionTitle>Productos Más Vendidos</SectionTitle>
-        <TableContainer>
-          <Table>
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Cantidad Vendida</th>
-                <th>Total ($)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productosMasVendidos.map((producto) => (
-                <tr key={producto.nombre}>
-                  <td>{producto.nombre}</td>
-                  <td>{producto.total}</td>
-                  <td>
-                    ${ventas
-                      .filter(v => v.nombre === producto.nombre)
-                      .reduce((sum, v) => sum + v.subtotal, 0)
-                      .toLocaleString('es-CL')}
-                  </td>
+        <ProductosGrid>
+          <ChartContainer>
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={productosMasVendidos}
+                  dataKey="total"
+                  nameKey="nombre"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={150}
+                  fill="#8884d8"
+                  label
+                >
+                  {productosMasVendidos.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={`hsl(${index * 45}, 70%, 50%)`} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+
+          <TableContainer>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad Vendida</th>
+                  <th>Total ($)</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableContainer>
+              </thead>
+              <tbody>
+                {productosMasVendidos.map((producto) => (
+                  <tr key={producto.nombre}>
+                    <td>{producto.nombre}</td>
+                    <td>{producto.total}</td>
+                    <td>
+                      ${ventas
+                        .filter(v => v.nombre === producto.nombre)
+                        .reduce((sum, v) => sum + v.subtotal, 0)
+                        .toLocaleString('es-CL')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableContainer>
+        </ProductosGrid>
       </Section>
 
       <Section>
@@ -228,6 +296,27 @@ const ErrorMessage = styled.div`
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1rem;
+`;
+
+const ChartContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+`;
+
+const ProductosGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export default SalesStats; 
