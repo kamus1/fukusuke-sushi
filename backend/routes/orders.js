@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const Order   = require('../models/Order');
 const auth    = require('../middleware/auth');
+const adminAuth = require('../middleware/adminAuth');
 const DetalleVenta = require('../models/DetalleVenta');
 
 /* helper: genera ticketId */
@@ -110,4 +111,17 @@ router.get('/by-token/:token', async (req, res) => {
     res.status(500).json({ msg: 'Error al buscar el comprobante' });
   }
 });
+
+/* ---------- Obtener todas las órdenes (solo admin) ---------- */
+router.get('/', auth, adminAuth, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .sort({ fechaPedido: -1 }); // Ordenar por fecha descendente
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Error al obtener las órdenes' });
+  }
+});
+
 module.exports = router;

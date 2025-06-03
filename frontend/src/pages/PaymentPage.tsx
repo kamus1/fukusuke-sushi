@@ -17,6 +17,7 @@ const PaymentPage = () => {
     email: '',
     emailConfirm: '',
     direccion: '',
+    numeroCasa: '',
     comuna: '',
     region: 'Región Metropolitana', // por default
     telefono: '',
@@ -78,6 +79,7 @@ const PaymentPage = () => {
           telefono: `${formData.codigoPais}${formData.telefono}`,
           direccionEnvio: {
             calle: formData.direccion,
+            numeroCasa: formData.numeroCasa,
             comuna: formData.comuna,
             region: formData.region
           }
@@ -208,6 +210,14 @@ const PaymentPage = () => {
                   name="direccion"
                   placeholder="Dirección"
                   value={formData.direccion}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="numeroCasa"
+                  placeholder="Número de casa"
+                  value={formData.numeroCasa}
                   onChange={handleInputChange}
                   required
                 />

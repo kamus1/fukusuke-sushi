@@ -122,7 +122,7 @@ router.get('/mis-ordenes', auth, checkRoles('admin', 'despachador'), async (req,
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Error al obtener tus órdenes de despacho' });
-  }
+  } 
 });
 
 module.exports = router;

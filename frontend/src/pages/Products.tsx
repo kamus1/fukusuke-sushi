@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { getProducts } from "../services/api";
 import axios from 'axios';
 import { API_URL } from '../config';
+import { calcularPrecioConDescuento } from '../utils/priceUtils';
 
 type Product = {
   _id: string;
@@ -72,7 +73,7 @@ const Products: React.FC = () => {
             
             const precioOriginal = product.precio;
             const precioConDescuento = promocionActiva 
-              ? precioOriginal * (1 - promocionActiva.descuento / 100)
+              ? calcularPrecioConDescuento(precioOriginal, promocionActiva.descuento)
               : precioOriginal;
 
             return (
@@ -136,9 +137,9 @@ const Products: React.FC = () => {
                 <div className="precio-promocion">
                   <span className="precio-original">${selectedProduct.precio.toLocaleString("es-CL")}</span>
                   <span className="precio-descuento">
-                    ${(selectedProduct.precio * (1 - promociones.find(promo => 
+                    ${calcularPrecioConDescuento(selectedProduct.precio, promociones.find(promo => 
                       promo.productos.some(p => p._id === selectedProduct._id)
-                    )!.descuento / 100)).toLocaleString("es-CL")}
+                    )!.descuento).toLocaleString("es-CL")}
                   </span>
                   <span className="descuento-badge">
                     -{promociones.find(promo => 
@@ -164,7 +165,7 @@ const Products: React.FC = () => {
                     promo.productos.some(p => p._id === selectedProduct._id)
                   );
                   const precioFinal = promocionActiva 
-                    ? selectedProduct.precio * (1 - promocionActiva.descuento / 100)
+                    ? calcularPrecioConDescuento(selectedProduct.precio, promocionActiva.descuento)
                     : selectedProduct.precio;
 
                   addToCart({

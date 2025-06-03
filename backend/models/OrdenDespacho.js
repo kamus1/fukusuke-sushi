@@ -5,7 +5,7 @@ const EstadoOrden = ['Pendiente', 'Asignada', 'Entregada'];
 const ordenDespachoSchema = new mongoose.Schema({
   direccion: {
     calle: String,
-    numero: String,
+    numeroCasa: String,
     comuna: String,
     region: String
   },
