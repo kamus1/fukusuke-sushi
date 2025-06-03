@@ -14,6 +14,7 @@ import UserManagement from "../pages/UserManagement";
 import SalesStats from "../pages/SalesStats";
 import Promociones from "../pages/Promociones";
 import PaymentError from "../pages/PaymentError"
+import AdminIngredientes from "../pages/AdminIngredientes";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <SalesStats />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/ingredientes"
+        element={
+          <ProtectedRoute>
+            <AdminIngredientes />
           </ProtectedRoute>
         }
       />

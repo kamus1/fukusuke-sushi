@@ -152,6 +152,7 @@ const Admin = () => {
         <h1>Panel de Administración</h1>
         <AdminNav>
           <NavLink to="/admin">Productos</NavLink>
+          <NavLink to="/admin/ingredientes">Ingredientes</NavLink>
           <NavLink to="/admin/users">Usuarios</NavLink>
           <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
           <NavLink to="/admin/promociones">Promociones</NavLink>
@@ -160,7 +161,6 @@ const Admin = () => {
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-
       {showCreateForm && (
         <FormContainer>
           <h2>Crear Nuevo Producto</h2>
@@ -609,5 +609,13 @@ const FormField = styled.div`
     resize: vertical;
   }
 `;
+
+const TableActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  gap: 1rem;
+`;
+
 
 export default Admin; 

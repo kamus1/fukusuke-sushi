@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const productSchema = new mongoose.Schema({
   id: {
     type: Number,
@@ -41,7 +42,11 @@ const productSchema = new mongoose.Schema({
   tags: {
     type: [String],
     default: []
-  }
+  },
+  ingredientes: [{
+    ingrediente_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
+    cantidad: Number
+  }]
 });
 
 module.exports = mongoose.model('Product', productSchema); 
