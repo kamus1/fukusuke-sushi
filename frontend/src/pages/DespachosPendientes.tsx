@@ -5,7 +5,7 @@ import { API_URL } from '../config';
 
 interface Direccion {
   calle: string;
-  numero: string;
+  numeroCasa: string;
   comuna: string;
   region: string;
 }
@@ -42,6 +42,7 @@ const DespachosPendientes = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [verAntiguas, setVerAntiguas] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -83,6 +84,33 @@ const DespachosPendientes = () => {
       setOrdenes([]);
     } finally {
       setCargando(false);
+    }
+  };
+
+  const fetchTodasPendientes = async () => {
+    setCargando(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${API_URL}/api/despachos/pendientes?page=1&limit=1000`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data.ordenes && Array.isArray(res.data.ordenes)) {
+        const pendientes = res.data.ordenes.filter((o: Orden) => o.estado === 'Pendiente');
+        const ordenadas = pendientes.sort((a, b) => {
+          const fechaA = new Date(a.orderId.fechaPedido).getTime();
+          const fechaB = new Date(b.orderId.fechaPedido).getTime();
+          return verAntiguas ? fechaA - fechaB : fechaB - fechaA;
+        });
+        setOrdenes(ordenadas);
+        setMensaje(`Órdenes pendientes ${verAntiguas ? 'más antiguas' : 'más recientes'} cargadas`);
+      }
+    } catch (err) {
+      console.error(err);
+      setMensaje('Error al cargar las órdenes pendientes');
+    } finally {
+      setCargando(false);
+      setVerAntiguas(!verAntiguas);
     }
   };
 
@@ -158,6 +186,9 @@ const DespachosPendientes = () => {
   return (
     <Container>
       <h1>Órdenes de Despacho</h1>
+      <BotonCarga onClick={fetchTodasPendientes}>
+        Cargar órdenes pendientes {verAntiguas ? 'más antiguas' : 'más recientes'}
+      </BotonCarga>
       {mensaje && <p className="mensaje">{mensaje}</p>}
       {cargando ? (
         <p>Cargando...</p>
@@ -179,7 +210,7 @@ const DespachosPendientes = () => {
                 <p><strong>RUT:</strong> {orden.orderId.rut || 'No especificado'}</p>
                 <p><strong>Teléfono:</strong> {orden.orderId.telefono || 'No especificado'}</p>
                 <p><strong>Email:</strong> {orden.orderId.email}</p>
-                <p><strong>Dirección:</strong> {`${orden.direccion.calle} ${orden.direccion.comuna}, ${orden.direccion.region}`}</p>
+                <p><strong>Dirección:</strong> {`${orden.direccion.calle}, ${orden.direccion.numeroCasa}, ${orden.direccion.comuna}, ${orden.direccion.region}`}</p>
                 <p><strong>Total:</strong> ${orden.orderId.total}</p>
                 <p><strong>Estado:</strong> {orden.estado}</p>
                 <p><strong>Fecha:</strong> {new Date(orden.orderId.fechaPedido).toLocaleString()}</p>
@@ -223,6 +254,21 @@ const Container = styled.div`
   .mensaje {
     font-size: 16px;
     color: green;
+  }
+`;
+
+const BotonCarga = styled.button`
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #218838;
   }
 `;
 

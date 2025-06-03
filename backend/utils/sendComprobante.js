@@ -21,11 +21,12 @@ const sendComprobante = async (order) => {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2 style="color: #333;">Comprobante de Pago - Fukusuke Sushi</h2>
       <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-        <p><strong>Ticket:</strong> ${order.ticketId}</p>
+        <p><strong>Ticket ID:</strong> ${order.ticketId}</p>
         <p><strong>Fecha:</strong> ${new Date(order.fechaPedido).toLocaleString()}</p>
         <p><strong>Nombre:</strong> ${order.nombres || 'Cliente'}</p>
         <p><strong>Email:</strong> ${order.email}</p>
         <p><strong>Teléfono:</strong> ${order.telefono}</p>
+        <p><strong>Dirección de envío:</strong> ${order.direccionEnvio.calle} ${order.direccionEnvio.numeroCasa}, ${order.direccionEnvio.comuna}, ${order.direccionEnvio.region}</p>
       </div>
       <h3 style="color: #444;">Productos:</h3>
       <ul style="list-style: none; padding: 0;">${productosHTML}</ul>

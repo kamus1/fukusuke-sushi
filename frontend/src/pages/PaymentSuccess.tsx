@@ -51,6 +51,7 @@ const PaymentSuccess = () => {
         <ReceiptItem><strong>Fecha:</strong> {new Date(order.fechaPedido).toLocaleString()}</ReceiptItem>
         <ReceiptItem><strong>Email:</strong> {order.email}</ReceiptItem>
         <ReceiptItem><strong>Teléfono:</strong> {order.telefono}</ReceiptItem>
+        <ReceiptItem><strong>Dirección de envío:</strong> {order.direccionEnvio.calle} {order.direccionEnvio.numeroCasa}, {order.direccionEnvio.comuna}, {order.direccionEnvio.region}</ReceiptItem>
         <ReceiptItem><strong>Método de pago:</strong> {order.metodoPago || 'Flow.cl'}</ReceiptItem>
         <ReceiptItem><strong>Estado:</strong> {order.estado}</ReceiptItem>
 

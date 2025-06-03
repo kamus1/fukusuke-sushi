@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
 
   direccionEnvio: {
     calle:  String,
-    numero: String,
+    numeroCasa: String,
     comuna: String,
     region: String
   },

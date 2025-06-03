@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { getProducts, updateProduct, createProduct, deleteProduct } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { API_URL } from '../config';
 
 interface Product {
   id: number;
@@ -15,6 +17,29 @@ interface Product {
   cantidad_piezas: number | string;
   especialidad: string;
   tags: string[];
+}
+
+interface Order {
+  _id: string;
+  ticketId: string;
+  email: string;
+  nombres: string;
+  telefono: string;
+  items: {
+    nombre: string;
+    cantidad: number;
+    precio: number;
+    subtotal: number;
+  }[];
+  total: number;
+  estado: string;
+  fechaPedido: string;
+  direccionEnvio: {
+    calle: string;
+    numeroCasa: string;
+    comuna: string;
+    region: string;
+  };
 }
 
 const emptyProduct: Product = {
@@ -38,6 +63,9 @@ const Admin = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Product>(emptyProduct);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [showOrders, setShowOrders] = useState(false);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const navigate = useNavigate();
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : null;
@@ -146,236 +174,333 @@ const Admin = () => {
     setShowCreateForm(false);
   };
 
+  const loadOrders = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_URL}/api/orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setOrders(response.data);
+    } catch (err) {
+      setError('Error al cargar las órdenes');
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (showOrders) {
+      loadOrders();
+    }
+  }, [showOrders]);
+
   return (
     <Container>
       <AdminHeader>
         <h1>Panel de Administración</h1>
         <AdminNav>
-          <NavLink to="/admin">Productos</NavLink>
+          <NavLink to="/admin" onClick={() => setShowOrders(false)}>Productos</NavLink>
           <NavLink to="/admin/ingredientes">Ingredientes</NavLink>
           <NavLink to="/admin/users">Usuarios</NavLink>
           <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
           <NavLink to="/admin/promociones">Promociones</NavLink>
+          <NavButton onClick={() => setShowOrders(true)}>
+            Ver Comprobantes
+          </NavButton>
         </AdminNav>
       </AdminHeader>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-      {showCreateForm && (
-        <FormContainer>
-          <h2>Crear Nuevo Producto</h2>
-          <FormGrid>
-            <FormField>
-              <label>Nombre:</label>
-              <input
-                type="text"
-                name="nombre"
-                value={newProduct.nombre}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-            <FormField>
-              <label>Precio:</label>
-              <input
-                type="number"
-                name="precio"
-                value={newProduct.precio}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-            <FormField>
-              <label>Stock:</label>
-              <input
-                type="number"
-                name="disponible"
-                value={newProduct.disponible}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-            <FormField>
-              <label>Tipo:</label>
-              <select
-                name="tipo"
-                value={newProduct.tipo}
-                onChange={(e) => handleChange(e, true)}
-              >
-                <option value="Tabla">Tabla</option>
-                <option value="Individual">Individual</option>
-                <option value="Combo">Combo</option>
-                <option value="Especial">Especial</option>
-              </select>
-            </FormField>
-            <FormField>
-              <label>Especialidad:</label>
-              <select
-                name="especialidad"
-                value={newProduct.especialidad}
-                onChange={(e) => handleChange(e, true)}
-              >
-                <option value="">Seleccione una especialidad</option>
-                <option value="Clásica">Clásica</option>
-                <option value="Premium">Premium</option>
-                <option value="Vegetariana">Vegetariana</option>
-                <option value="Gourmet">Gourmet</option>
-                <option value="Tradicional">Tradicional</option>
-                <option value="Fusion">Fusión</option>
-                <option value="Crunchy">Crunchy</option>
-                <option value="Familiar">Familiar</option>
-              </select>
-            </FormField>
-            <FormField>
-              <label>URL de Imagen:</label>
-              <input
-                type="text"
-                name="img_url"
-                value={newProduct.img_url}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-            <FormField>
-              <label>Cantidad de Piezas:</label>
-              <input
-                type="number"
-                name="cantidad_piezas"
-                value={newProduct.cantidad_piezas}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-            <FormField className="full-width">
-              <label>Descripción:</label>
-              <textarea
-                name="descripcion"
-                value={newProduct.descripcion}
-                onChange={(e) => handleChange(e, true)}
-              />
-            </FormField>
-          </FormGrid>
-          <ButtonGroup>
-            <SaveButton onClick={handleCreate}>Crear Producto</SaveButton>
-            <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-          </ButtonGroup>
-        </FormContainer>
-      )}
 
-      <TableWrapper>
-        <ProductsTable>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Tipo</th>
-              <th>Imagen URL</th>
-              <th>Descripción</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => (
-              <tr key={product.id}>
-                <td>{product.id}</td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={editedProduct?.nombre || ''}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    product.nombre
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <input
-                      type="number"
-                      name="precio"
-                      value={editedProduct?.precio || 0}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    `$${product.precio.toLocaleString('es-CL')}`
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <input
-                      type="number"
-                      name="disponible"
-                      value={editedProduct?.disponible || 0}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    product.disponible
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <select
-                      name="tipo"
-                      value={editedProduct?.tipo || ''}
-                      onChange={handleChange}
-                    >
-                      <option value="Tabla">Tabla</option>
-                      <option value="Individual">Individual</option>
-                      <option value="Combo">Combo</option>
-                      <option value="Especial">Especial</option>
-                    </select>
-                  ) : (
-                    product.tipo
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <input
-                      type="text"
-                      name="img_url"
-                      value={editedProduct?.img_url || ''}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    <img 
-                      src={product.img_url} 
-                      alt={product.nombre} 
-                      style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                    />
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <textarea
-                      name="descripcion"
-                      value={editedProduct?.descripcion || ''}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    product.descripcion
-                  )}
-                </td>
-                <td>
-                  {editingProduct === product.id ? (
-                    <ButtonGroup>
-                      <SaveButton onClick={handleSave}>Guardar</SaveButton>
-                      <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-                    </ButtonGroup>
-                  ) : (
-                    <ButtonGroup>
-                      <EditButton onClick={() => handleEdit(product)}>
-                        <span role="img" aria-label="edit">✏️</span>
-                      </EditButton>
-                      <DeleteButton onClick={() => handleDelete(product.id)}>
-                        <span role="img" aria-label="delete">🗑️</span>
-                      </DeleteButton>
-                    </ButtonGroup>
-                  )}
-                </td>
+      {showOrders ? (
+        <TableWrapper>
+          <h2>Comprobantes de Compra</h2>
+          <OrdersTable>
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Detalles</th>
               </tr>
-            ))}
-          </tbody>
-        </ProductsTable>
-      </TableWrapper>
+            </thead>
+            <tbody>
+              {orders.map(order => (
+                <>
+                  <tr key={order._id}>
+                    <td>{order.ticketId}</td>
+                    <td>{new Date(order.fechaPedido).toLocaleString()}</td>
+                    <td>{order.nombres}</td>
+                    <td>{order.email}</td>
+                    <td>{order.telefono}</td>
+                    <td>
+                      {order.direccionEnvio.calle} {order.direccionEnvio.numeroCasa}, {order.direccionEnvio.comuna}
+                    </td>
+                    <td>${order.total.toLocaleString('es-CL')}</td>
+                    <td>
+                      <StatusBadge status={order.estado}>
+                        {order.estado}
+                      </StatusBadge>
+                    </td>
+                    <td>
+                      <DetailsButton 
+                        onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
+                      >
+                        {expandedOrderId === order._id ? 'Ocultar' : 'Ver'} Detalles
+                      </DetailsButton>
+                    </td>
+                  </tr>
+                  {expandedOrderId === order._id && (
+                    <tr>
+                      <td colSpan={9}>
+                        <OrderDetails>
+                          <h4>Detalles del Pedido</h4>
+                          <ItemsList>
+                            {order.items.map((item, index) => (
+                              <ItemRow key={index}>
+                                <ItemName>{item.nombre}</ItemName>
+                                <ItemQuantity>x{item.cantidad}</ItemQuantity>
+                                <ItemPrice>${item.precio.toLocaleString('es-CL')}</ItemPrice>
+                                <ItemSubtotal>${item.subtotal.toLocaleString('es-CL')}</ItemSubtotal>
+                              </ItemRow>
+                            ))}
+                          </ItemsList>
+                          <OrderTotal>
+                            Total: ${order.total.toLocaleString('es-CL')}
+                          </OrderTotal>
+                        </OrderDetails>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              ))}
+            </tbody>
+          </OrdersTable>
+        </TableWrapper>
+      ) : (
+        <>
+          {showCreateForm && (
+            <FormContainer>
+              <h2>Crear Nuevo Producto</h2>
+              <FormGrid>
+                <FormField>
+                  <label>Nombre:</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={newProduct.nombre}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+                <FormField>
+                  <label>Precio:</label>
+                  <input
+                    type="number"
+                    name="precio"
+                    value={newProduct.precio}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+                <FormField>
+                  <label>Stock:</label>
+                  <input
+                    type="number"
+                    name="disponible"
+                    value={newProduct.disponible}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+                <FormField>
+                  <label>Tipo:</label>
+                  <select
+                    name="tipo"
+                    value={newProduct.tipo}
+                    onChange={(e) => handleChange(e, true)}
+                  >
+                    <option value="Tabla">Tabla</option>
+                    <option value="Individual">Individual</option>
+                    <option value="Combo">Combo</option>
+                    <option value="Especial">Especial</option>
+                  </select>
+                </FormField>
+                <FormField>
+                  <label>Especialidad:</label>
+                  <select
+                    name="especialidad"
+                    value={newProduct.especialidad}
+                    onChange={(e) => handleChange(e, true)}
+                  >
+                    <option value="">Seleccione una especialidad</option>
+                    <option value="Clásica">Clásica</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Vegetariana">Vegetariana</option>
+                    <option value="Gourmet">Gourmet</option>
+                    <option value="Tradicional">Tradicional</option>
+                    <option value="Fusion">Fusión</option>
+                    <option value="Crunchy">Crunchy</option>
+                    <option value="Familiar">Familiar</option>
+                  </select>
+                </FormField>
+                <FormField>
+                  <label>URL de Imagen:</label>
+                  <input
+                    type="text"
+                    name="img_url"
+                    value={newProduct.img_url}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+                <FormField>
+                  <label>Cantidad de Piezas:</label>
+                  <input
+                    type="number"
+                    name="cantidad_piezas"
+                    value={newProduct.cantidad_piezas}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+                <FormField className="full-width">
+                  <label>Descripción:</label>
+                  <textarea
+                    name="descripcion"
+                    value={newProduct.descripcion}
+                    onChange={(e) => handleChange(e, true)}
+                  />
+                </FormField>
+              </FormGrid>
+              <ButtonGroup>
+                <SaveButton onClick={handleCreate}>Crear Producto</SaveButton>
+                <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
+              </ButtonGroup>
+            </FormContainer>
+          )}
+
+          <TableWrapper>
+            <ProductsTable>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Tipo</th>
+                  <th>Imagen URL</th>
+                  <th>Descripción</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map(product => (
+                  <tr key={product.id}>
+                    <td>{product.id}</td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <input
+                          type="text"
+                          name="nombre"
+                          value={editedProduct?.nombre || ''}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        product.nombre
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <input
+                          type="number"
+                          name="precio"
+                          value={editedProduct?.precio || 0}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        `$${product.precio.toLocaleString('es-CL')}`
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <input
+                          type="number"
+                          name="disponible"
+                          value={editedProduct?.disponible || 0}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        product.disponible
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <select
+                          name="tipo"
+                          value={editedProduct?.tipo || ''}
+                          onChange={handleChange}
+                        >
+                          <option value="Tabla">Tabla</option>
+                          <option value="Individual">Individual</option>
+                          <option value="Combo">Combo</option>
+                          <option value="Especial">Especial</option>
+                        </select>
+                      ) : (
+                        product.tipo
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <input
+                          type="text"
+                          name="img_url"
+                          value={editedProduct?.img_url || ''}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        <img 
+                          src={product.img_url} 
+                          alt={product.nombre} 
+                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <textarea
+                          name="descripcion"
+                          value={editedProduct?.descripcion || ''}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        product.descripcion
+                      )}
+                    </td>
+                    <td>
+                      {editingProduct === product.id ? (
+                        <ButtonGroup>
+                          <SaveButton onClick={handleSave}>Guardar</SaveButton>
+                          <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
+                        </ButtonGroup>
+                      ) : (
+                        <ButtonGroup>
+                          <EditButton onClick={() => handleEdit(product)}>
+                            <span role="img" aria-label="edit">✏️</span>
+                          </EditButton>
+                          <DeleteButton onClick={() => handleDelete(product.id)}>
+                            <span role="img" aria-label="delete">🗑️</span>
+                          </DeleteButton>
+                        </ButtonGroup>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </ProductsTable>
+          </TableWrapper>
+        </>
+      )}
     </Container>
   );
 };
@@ -617,5 +742,151 @@ const TableActions = styled.div`
   gap: 1rem;
 `;
 
+const NavButton =styled(Link)`
+padding: 0.5rem 1rem;
+background-color: #f0f0f0;
+border-radius: 4px;
+text-decoration: none;
+color: #333;
+
+&:hover {
+  background-color: #e0e0e0;
+}
+`;
+
+const OrdersTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: 1rem;
+
+  th {
+    background: #e00000;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  tr:hover {
+    background: #f8f9fa;
+  }
+`;
+
+const StatusBadge = styled.span<{ status: string }>`
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: ${({ status }) => {
+    switch (status) {
+      case 'pagado':
+        return '#e8f5e9';
+      case 'pendiente':
+        return '#fff3e0';
+      case 'en_proceso':
+        return '#e3f2fd';
+      case 'cancelado':
+        return '#ffebee';
+      case 'rechazado':
+        return '#ffebee';
+      default:
+        return '#f5f5f5';
+    }
+  }};
+  color: ${({ status }) => {
+    switch (status) {
+      case 'pagado':
+        return '#2e7d32';
+      case 'pendiente':
+        return '#ef6c00';
+      case 'en_proceso':
+        return '#1565c0';
+      case 'cancelado':
+      case 'rechazado':
+        return '#c62828';
+      default:
+        return '#616161';
+    }
+  }};
+`;
+
+const DetailsButton = styled.button`
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+`;
+
+const OrderDetails = styled.div`
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
+`;
+
+const ItemsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const ItemRow = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 4px;
+  align-items: center;
+`;
+
+const ItemName = styled.span`
+  font-weight: 500;
+`;
+
+const ItemQuantity = styled.span`
+  color: #666;
+`;
+
+const ItemPrice = styled.span`
+  color: #666;
+`;
+
+const ItemSubtotal = styled.span`
+  font-weight: 600;
+  color: #e00000;
+`;
+
+const OrderTotal = styled.div`
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #eee;
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e00000;
+`;
 
 export default Admin; 
