@@ -101,14 +101,15 @@ router.post('/confirmation', express.urlencoded({ extended: true }), async (req,
     // 3 rechazada
     // 4 anulada
     const esPagoExitoso = paymentStatusData.status === 2;
-    const order = await Order.findOne({ flowToken: token }); // busca la orden que tenga el token asociado a la compra
-    if (!order) {
-      console.warn(`Orden no encontrada con token ${token} o commerceOrder ${paymentStatusData.commerceOrder} desde /confirmation`);
-      return res.status(404).send('Orden no encontrada');
-    }
-
 
     if (esPagoExitoso) {
+      const order = await Order.findOne({ flowToken: token }); // busca la orden que tenga el token asociado a la compra
+      
+      if (!order) {
+        console.warn(`Orden no encontrada con token ${token} o commerceOrder ${paymentStatusData.commerceOrder} desde /confirmation`);
+        return res.status(404).send('Orden no encontrada');
+      }
+
       if (order.estado !== 'pagado') {
         order.estado = 'pagado';
         await order.save();

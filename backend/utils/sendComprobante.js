@@ -54,10 +54,10 @@ const sendComprobante = async (order) => {
         }]
       });
 
-    console.log('✅ Email enviado exitosamente:', response.body);
+    console.log('Email enviado exitosamente:', response.body);
     return response;
   } catch (error) {
-    console.error('❌ Error al enviar email:', error.message);
+    console.error('Error al enviar email:', error.message);
     if (error.response) {
       console.error('Detalles del error:', error.response.body);
     }
