@@ -1,2 +1,41 @@
+# Node.js
+frontend/node_modules/
+frontend/eslint.config.js
+
+frontend/index.html
+
+# Editor/IDE
+.vscode/
 .idea/
-.vscode
+.DS_Store
+
+# Build output
+dist/
+build/
+
+# Vite
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# MERN Stack (MongoDB, Express, React, Node.js)
+.env
+coverage/
+logs/
+*.log
+debug.log
+out/
+tmp/
+
+# Vite y React
+public/
+assets/
+
+# MongoDB
+data/db/
+dump/
+
+# Otros archivos innecesarios
+*.swp
+*.swo

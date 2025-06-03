@@ -12,6 +12,7 @@ const despachoRoutes = require('./routes/despachos');
 const userRoutes = require('./routes/users');
 const ventasRoutes = require('./routes/ventas');
 const promocionesRoutes = require('./routes/promociones');
+const ingredientsRoutes = require('./routes/ingredients');
 
 const app = express();
 
@@ -33,6 +34,8 @@ app.use('/api/despachos', despachoRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/ventas', ventasRoutes);
 app.use('/api/promociones', promocionesRoutes);
+app.use('/api/ingredients', ingredientsRoutes);
+
 
 // Endpoint /api/health 
 app.get('/api/health', async (req, res) => {
