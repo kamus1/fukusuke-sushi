@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 const adminAuth = require('../middleware/adminAuth');
 
-// ✅ Devuelve los datos del usuario autenticado
+//Devuelve los datos del usuario autenticado
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password'); // sin la contraseña

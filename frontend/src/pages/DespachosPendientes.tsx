@@ -120,7 +120,7 @@ const DespachosPendientes = () => {
       const res = await axios.post(`${API_URL}/api/despachos/tomar/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setMensaje(`Orden tomada: ${res.data.orden.orderId.ticketId}`);
+      setMensaje(`Orden tomada`);
       fetchOrdenes();
     } catch (err) {
       setMensaje('No se pudo tomar la orden');
@@ -134,7 +134,7 @@ const DespachosPendientes = () => {
       const res = await axios.post(`${API_URL}/api/despachos/completar/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setMensaje(`Orden completada: ${res.data.orden.orderId.ticketId}`);
+      setMensaje(`Orden completada`);
       fetchOrdenes();
     } catch (err: any) {
       setMensaje(err.response?.data?.msg || 'No se pudo completar la orden');

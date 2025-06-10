@@ -199,13 +199,15 @@ const Admin = () => {
         <h1>Panel de Administración</h1>
         <AdminNav>
           <NavLink to="/admin" onClick={() => setShowOrders(false)}>Productos</NavLink>
-          <NavLink to="/admin/ingredientes">Ingredientes</NavLink>
+
           <NavLink to="/admin/users">Usuarios</NavLink>
           <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
           <NavLink to="/admin/promociones">Promociones</NavLink>
           <NavButton onClick={() => setShowOrders(true)}>
             Ver Comprobantes
           </NavButton>
+
+          <NavButton2  onClick={() => setShowCreateForm(true)}>Crear Producto</NavButton2>
         </AdminNav>
       </AdminHeader>
 
@@ -753,6 +755,19 @@ color: #333;
   background-color: #e0e0e0;
 }
 `;
+
+const NavButton2 =styled(Link)`
+padding: 0.5rem 1rem;
+background-color: #0fb70f;
+border-radius: 4px;
+text-decoration: none;
+color: white;
+
+&:hover {
+  background-color: #07c307;
+}
+`;
+
 
 const OrdersTable = styled.table`
   width: 100%;

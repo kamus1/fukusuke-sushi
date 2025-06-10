@@ -87,7 +87,7 @@ const SalesStats = () => {
       <StatsGrid>
         <StatCard>
           <StatTitle>Total de Ventas</StatTitle>
-          <StatValue>${totalVentas.toLocaleString('es-CL')}</StatValue>
+          <StatValue>${Math.round((totalVentas)).toLocaleString('es-CL')}</StatValue>
         </StatCard>
 
         <StatCard>

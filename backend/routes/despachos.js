@@ -17,7 +17,7 @@ const checkRoles = (...roles) => {
   };
 };
 
-// ✅ Tomar una orden de despacho
+//Tomar una orden de despacho
 router.post('/tomar/:id', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const orden = await OrdenDespacho.findById(req.params.id);
@@ -42,7 +42,7 @@ router.post('/tomar/:id', auth, checkRoles('admin', 'despachador'), async (req, 
   }
 });
 
-// ✅ Completar una orden de despacho
+//Completar una orden de despacho
 router.post('/completar/:id', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const orden = await OrdenDespacho.findById(req.params.id);
@@ -67,7 +67,7 @@ router.post('/completar/:id', auth, checkRoles('admin', 'despachador'), async (r
   }
 });
 
-// ✅ Obtener todas las órdenes de despacho
+//Obtener todas las órdenes de despacho
 router.get('/', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const ordenes = await OrdenDespacho.find()
@@ -80,7 +80,7 @@ router.get('/', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   }
 });
 
-// ✅ Obtener solo las órdenes pendientes con paginación
+//Obtener solo las órdenes pendientes con paginación
 router.get('/pendientes', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -110,7 +110,7 @@ router.get('/pendientes', auth, checkRoles('admin', 'despachador'), async (req, 
   }
 });
 
-// ✅ Obtener las órdenes asignadas al usuario actual
+//Obtener las órdenes asignadas al usuario actual
 router.get('/mis-ordenes', auth, checkRoles('admin', 'despachador'), async (req, res) => {
   try {
     const despachador = await User.findById(req.user.id);
