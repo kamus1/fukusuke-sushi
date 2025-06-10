@@ -6,6 +6,7 @@ const User = require('../models/User');
 const { check, validationResult } = require('express-validator');
 
 // Middleware de autenticación básica
+// este es usado para proteger rutas que solo pueden usar usuarios autenticados.
 const auth = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -39,7 +40,8 @@ const isAdmin = (req, res, next) => {
 router.post('/register', [
   check('email', 'Por favor incluye un email válido').isEmail(),
   check('password', 'La contraseña debe tener 6 o más caracteres').isLength({ min: 6 }),
-  check('nombre', 'El nombre es requerido').not().isEmpty()
+  check('nombre', 'El nombre es requerido').not().isEmpty(),
+  check('role').optional().isIn(['user', 'admin', 'despachador']).withMessage('Rol no válido')
 ], async (req, res) => {
   console.log('Datos recibidos:', req.body);
   try {
@@ -53,7 +55,7 @@ router.post('/register', [
       });
     }
 
-    const { email, password, nombre } = req.body;
+    const { email, password, nombre, role } = req.body;
 
     // Verificar si el usuario ya existe
     let user = await User.findOne({ email: email.toLowerCase() });
@@ -64,16 +66,25 @@ router.post('/register', [
       });
     }
 
-    // Crear nuevo usuario
-    user = new User({
+    // Crear nuevo usuario con rol opcional
+    const newUserData = {
       email: email.toLowerCase(),
       password,
       nombre,
-      role: 'user' // Por defecto todos los registros nuevos son usuarios normales
-    });
+      role: role || 'user'
+    };
 
-    // Guardar usuario
-    await user.save();
+    // Si el usuario es despachador, agregar atributos especiales
+    if (newUserData.role === 'despachador') {
+      newUserData.despachador = {
+        estado: 'Disponible',
+        disponibilidad: true
+      };
+    }
+
+    user = new User(newUserData);
+
+    await user.save();    // Guardar usuario
 
     // Crear JWT
     const payload = {
@@ -143,7 +154,7 @@ router.post('/login', [
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '24h' },
+      { expiresIn: '7d' },
       (err, token) => {
         if (err) throw err;
         res.json({ 

@@ -1,15 +1,18 @@
 const mongoose = require('mongoose');
 
+//order o comprobante de pago
+
 /* --- sub-documento de cada ítem --- */
 const orderItemSchema = new mongoose.Schema({
-  product:  { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  product:  { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, //id del producto
   nombre:   String,
   cantidad: { type: Number, required: true, min: 1 },
   precio:   { type: Number, required: true },
   subtotal: { type: Number, required: true }
+  //en este no se guarda la fecha ya que la tiene la order
 });
 
-/* --- esquema principal de la orden --- */
+/* --- esquema principal de la orden (comprobante de pago) --- */
 const orderSchema = new mongoose.Schema({
   user:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   email:  { type: String, required: true },

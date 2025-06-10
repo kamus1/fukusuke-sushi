@@ -7,8 +7,14 @@ const adminAuth = require('../middleware/adminAuth');
 //Devuelve los datos del usuario autenticado
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password'); // sin la contraseña
+    let user = await User.findById(req.user.id).select('-password');
     if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+
+    user = user.toObject(); 
+    if (user.role !== 'despachador') {
+      delete user.despachador;
+    }
+
     res.json(user);
   } catch (err) {
     console.error(err);
@@ -20,7 +26,16 @@ router.get('/me', auth, async (req, res) => {
 router.get('/', auth, adminAuth, async (req, res) => {
   try {
     const users = await User.find({}, '-password');
-    res.json(users);
+
+    const cleanedUsers = users.map(user => {
+      const obj = user.toObject();
+      if (obj.role !== 'despachador') {
+        delete obj.despachador;
+      }
+      return obj;
+    });
+
+    res.json(cleanedUsers);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener usuarios', error: error.message });
   }

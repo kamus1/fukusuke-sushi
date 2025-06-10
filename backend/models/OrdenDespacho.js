@@ -17,7 +17,7 @@ const ordenDespachoSchema = new mongoose.Schema({
 
   encargadoDespacho: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reutilizamos el modelo User
+    ref: 'User', // reutilizando el modelo User
     default: null
   },
 
@@ -42,6 +42,7 @@ const ordenDespachoSchema = new mongoose.Schema({
     default: 'Pendiente'
   },
 
+  //id de la orden, o del comprobante de pago asociado
   orderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Order',

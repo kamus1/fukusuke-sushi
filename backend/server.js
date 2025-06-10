@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // cliente de MongoDB con validaciones y modelos.
 require('dotenv').config();
 
 // Importar rutas
@@ -16,16 +16,18 @@ const ingredientsRoutes = require('./routes/ingredients');
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Middlewares
+app.use(cors());          //permite peticiones desde otros orígenes 
+app.use(express.json());  //convierte JSON recibido en req.body, parsea req.body a JSON
 
-// Conexión a MongoDB
+//conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error conectando a MongoDB:', err));
 
-// Usar rutas
+
+
+// montaje de rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
@@ -37,7 +39,7 @@ app.use('/api/promociones', promocionesRoutes);
 app.use('/api/ingredients', ingredientsRoutes);
 
 
-// Endpoint /api/health 
+//endpoint de prueba /api/health 
 app.get('/api/health', async (req, res) => {
   const mongoState = mongoose.connection.readyState;
 
@@ -48,7 +50,7 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-// Manejo de errores global
+//manejo de errores global
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Error en el servidor' });

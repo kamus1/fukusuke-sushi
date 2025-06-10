@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const detalleVentaSchema = new mongoose.Schema({
-  orderId: {
+  orderId: { //este es el id de la orden al cual pertenece el detalle de venta
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Order',
     required: true
   },
-  productId: {
+  productId: { //id del producto vendido
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
     required: true
