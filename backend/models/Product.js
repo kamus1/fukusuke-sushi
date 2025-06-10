@@ -39,10 +39,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  tags: {
-    type: [String],
-    default: []
-  },
+  
   ingredientes: [{
     ingrediente_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
     cantidad: Number

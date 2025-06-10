@@ -4,6 +4,8 @@ const DetalleVenta = require('../models/DetalleVenta');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
+//midleware auth: verifica el token JWT
+
 // Obtener todas las ventas (solo admin)
 router.get('/', auth, adminAuth, async (req, res) => {
   try {
