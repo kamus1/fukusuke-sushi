@@ -10,7 +10,7 @@ const sendComprobante = require('../utils/sendComprobante');
 const FLOW_API_KEY = process.env.FLOW_API_KEY;
 const FLOW_SECRET_KEY = process.env.FLOW_SECRET_KEY;
 const FLOW_API_URL = 'https://sandbox.flow.cl/api';
-const WEBHOOK_URL = process.env.WEBHOOK_URL;
+const WEBHOOK_URL = process.env.WEBHOOK_URL; //ngrok
 const FRONTEND_URL = process.env.FRONTEND_URL
 
 // Función para firmar los parámetros

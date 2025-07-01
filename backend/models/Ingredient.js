@@ -25,15 +25,17 @@ const ingredientSchema = new mongoose.Schema({
     type: Boolean, 
     default: true,
   },
+  img_url: {
+    type: String,
+    required: false
+  },
   productos_asociados: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   }]
-  },
-  {
-    timestamps: true
-  });
-
-
+},
+{
+  timestamps: true
+});
 
 module.exports = mongoose.model('Ingredient', ingredientSchema);

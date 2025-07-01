@@ -199,15 +199,16 @@ const Admin = () => {
         <h1>Panel de Administración</h1>
         <AdminNav>
           <NavLink to="/admin" onClick={() => setShowOrders(false)}>Productos</NavLink>
-
           <NavLink to="/admin/users">Usuarios</NavLink>
+          <NavLink to="/admin/ingredientes">Ingredientes</NavLink>
           <NavLink to="/admin/ventas">Estadísticas de Ventas</NavLink>
           <NavLink to="/admin/promociones">Promociones</NavLink>
-          <NavButton onClick={() => setShowOrders(true)}>
+          <button style={{padding: '0.5rem 1rem', backgroundColor: '#f0f0f0', borderRadius: '4px', border: 'none', color: '#333', cursor: 'pointer'}} onClick={() => setShowOrders(true)}>
             Ver Comprobantes
-          </NavButton>
-
-          <NavButton2  onClick={() => setShowCreateForm(true)}>Crear Producto</NavButton2>
+          </button>
+          <button style={{padding: '0.5rem 1rem', backgroundColor: '#0fb70f', borderRadius: '4px', border: 'none', color: 'white', cursor: 'pointer'}} onClick={() => setShowCreateForm(true)}>
+            Crear Producto
+          </button>
         </AdminNav>
       </AdminHeader>
 
@@ -241,7 +242,9 @@ const Admin = () => {
                     <td>{order.email}</td>
                     <td>{order.telefono}</td>
                     <td>
-                      {order.direccionEnvio.calle} {order.direccionEnvio.numeroCasa}, {order.direccionEnvio.comuna}
+                      {order.direccionEnvio
+                        ? `${order.direccionEnvio.calle} ${order.direccionEnvio.numeroCasa}, ${order.direccionEnvio.comuna}`
+                        : 'Sin dirección'}
                     </td>
                     <td>${order.total.toLocaleString('es-CL')}</td>
                     <td>
@@ -744,31 +747,6 @@ const TableActions = styled.div`
   gap: 1rem;
 `;
 
-const NavButton =styled(Link)`
-padding: 0.5rem 1rem;
-background-color: #f0f0f0;
-border-radius: 4px;
-text-decoration: none;
-color: #333;
-
-&:hover {
-  background-color: #e0e0e0;
-}
-`;
-
-const NavButton2 =styled(Link)`
-padding: 0.5rem 1rem;
-background-color: #0fb70f;
-border-radius: 4px;
-text-decoration: none;
-color: white;
-
-&:hover {
-  background-color: #07c307;
-}
-`;
-
-
 const OrdersTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -904,4 +882,4 @@ const OrderTotal = styled.div`
   color: #e00000;
 `;
 
-export default Admin; 
+export default Admin;

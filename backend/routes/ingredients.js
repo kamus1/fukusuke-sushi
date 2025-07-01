@@ -9,7 +9,7 @@ const { updateProductAvailability } = require('../utils/productAvailability');
 router.post('/', async (req, res) => {
   try {
     // Validación básica
-    const { nombre, cantidad, unidad, stock_minimo } = req.body;
+    const { nombre, cantidad, unidad, stock_minimo, img_url } = req.body;
     
     if (!nombre || !unidad) {
       return res.status(400).json({ message: 'Nombre y unidad son requeridos' });
@@ -21,7 +21,8 @@ router.post('/', async (req, res) => {
       cantidad: Number(cantidad) || 0,
       unidad,
       stock_minimo: Number(stock_minimo) || 0,
-      disponible: true // Por defecto disponible al crear
+      disponible: true, // Por defecto disponible al crear
+      img_url: img_url || undefined // Incluir img_url si se proporciona
     });
 
     // Guardar en la base de datos
@@ -58,7 +59,7 @@ router.get('/', async (req, res) => {
 // Actualizar un ingrediente
 router.put('/:id',  async (req, res) => {
   try {
-    const { nombre, cantidad, unidad, stock_minimo, disponible } = req.body;
+    const { nombre, cantidad, unidad, stock_minimo, disponible, img_url } = req.body;
     
     const ingredient = await Ingredient.findByIdAndUpdate(
       req.params.id,
@@ -67,7 +68,8 @@ router.put('/:id',  async (req, res) => {
         cantidad,
         unidad,
         stock_minimo,
-        disponible
+        disponible,
+        img_url: img_url || undefined // Incluir img_url si se proporciona
       },
       { new: true, runValidators: true  } // runValidators asegura que se apliquen las validaciones del esquema
     );

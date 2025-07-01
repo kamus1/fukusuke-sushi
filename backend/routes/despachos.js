@@ -7,7 +7,7 @@ const User = require('../models/User');
 // Verificar roles
 const checkRoles = (...roles) => {
   return async (req, res, next) => {
-    console.log('🔍 req.user:', req.user);
+    console.log('req.user:', req.user);
 
     const user = await User.findById(req.user.id);
     if (!user || !roles.includes(user.role)) {
@@ -108,7 +108,7 @@ router.get('/pendientes', auth, checkRoles('admin', 'despachador'), async (req, 
     console.error(err);
     res.status(500).json({ msg: 'Error al obtener órdenes pendientes' });
   }
-});
+}); 
 
 //Obtener las órdenes asignadas al usuario actual
 router.get('/mis-ordenes', auth, checkRoles('admin', 'despachador'), async (req, res) => {

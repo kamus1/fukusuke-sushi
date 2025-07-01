@@ -15,15 +15,17 @@ interface Ingredient {
   unidad: string;
   stock_minimo: number;
   disponible: boolean;
+  img_url?: string;
 }
 
 const emptyIngredient: Ingredient = {
   _id: '',
   nombre: '',
   cantidad: 0,
-  unidad: 'gramos',
+  unidad: 'kilos',
   stock_minimo: 0,
-  disponible: true
+  disponible: true,
+  img_url: ''
 };
 
 const AdminIngredientes = () => {
@@ -120,25 +122,27 @@ const AdminIngredientes = () => {
   };
 
   const handleCreate = async () => {
-  try {
-    const ingredientToCreate = {
-      ...newIngredient,
-      cantidad: Number(newIngredient.cantidad),
-      stock_minimo: Number(newIngredient.stock_minimo),
-      disponible: Boolean(newIngredient.disponible)
-    };
+    try {
+      const ingredientToCreate = {
+        ...newIngredient,
+        cantidad: Number(newIngredient.cantidad),
+        stock_minimo: Number(newIngredient.stock_minimo),
+        disponible: Boolean(newIngredient.disponible)
+      };
 
-    const createdIngredient = await createIngredient(ingredientToCreate);
-    setIngredients([...ingredients, createdIngredient]);
-    setShowCreateForm(false);
-    setNewIngredient(emptyIngredient);
-    setSuccessMessage('Ingrediente creado correctamente');
-    setTimeout(() => setSuccessMessage(null), 3000);
-  } catch (err) {
-    setError('Error al crear el ingrediente');
-    console.error(err);
-  }
-};
+      const createdIngredient = await createIngredient(ingredientToCreate);
+      setIngredients([...ingredients, createdIngredient]);
+      setShowCreateForm(false);
+      setNewIngredient(emptyIngredient);
+      setSuccessMessage('Ingrediente creado correctamente');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      // Mostrar mensaje de error del backend si existe
+      const backendMsg = err?.message || 'Error al crear el ingrediente';
+      setError(backendMsg);
+      console.error(err);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, 
@@ -245,6 +249,16 @@ const AdminIngredientes = () => {
                 Disponible
               </label>
             </FormField>
+            <FormField>
+              <label>URL de Imagen (opcional):</label>
+              <input
+                type="text"
+                name="img_url"
+                value={newIngredient.img_url}
+                onChange={(e) => handleChange(e, true)}
+                placeholder="https://..."
+              />
+            </FormField>
           </FormGrid>
           <ButtonGroup>
             <SaveButton onClick={handleCreate}>Crear Ingrediente</SaveButton>
@@ -268,6 +282,7 @@ const AdminIngredientes = () => {
               <th>Unidad</th>
               <th>Stock Mínimo</th>
               <th>Disponible</th>
+              <th>Imagen</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -347,6 +362,23 @@ const AdminIngredientes = () => {
                     }}>
                       {ingredient.disponible ? 'Sí' : 'No'}
                     </span>
+                  )}
+                </td>
+                <td>
+                  {editingId === ingredient._id ? (
+                    <input
+                      type="text"
+                      name="img_url"
+                      value={editedIngredient?.img_url || ''}
+                      onChange={handleChange}
+                      placeholder="https://..."
+                    />
+                  ) : (
+                    ingredient.img_url ? (
+                      <img src={ingredient.img_url} alt={ingredient.nombre} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                    ) : (
+                      <span style={{ color: '#aaa' }}>Sin imagen</span>
+                    )
                   )}
                 </td>
                 <td>
