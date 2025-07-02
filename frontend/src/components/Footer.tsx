@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
         <ContactInfo>
           <p>Contáctanos:</p>
           <p>+569 1234 5678</p>
-          <p>fukusuke@sushi.com</p>
+          <p>fukusukesushis@gmail.com</p>
         </ContactInfo>
       </Section>
     </FooterContainer>

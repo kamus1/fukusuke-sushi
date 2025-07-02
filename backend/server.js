@@ -18,7 +18,7 @@ const app = express();
 
 // Middlewares
 app.use(cors());          //permite peticiones desde otros orígenes 
-app.use(express.json());  //convierte JSON recibido en req.body, parsea req.body a JSON
+app.use(express.json());  // parsea el cuerpo de peticiones JSON y lo asigna a req.body
 
 //conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -29,11 +29,17 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // montaje de rutas
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/flow', flowRoutes);
-app.use('/api/despachos', despachoRoutes);
 app.use('/api/users', userRoutes);
+
+app.use('/api/products', productRoutes);
+
+app.use('/api/orders', orderRoutes);
+
+//payment
+app.use('/api/flow', flowRoutes);
+
+app.use('/api/despachos', despachoRoutes);
+
 app.use('/api/ventas', ventasRoutes);
 app.use('/api/promociones', promocionesRoutes);
 app.use('/api/ingredients', ingredientsRoutes);
